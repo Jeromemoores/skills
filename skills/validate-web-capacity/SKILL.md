@@ -23,6 +23,8 @@ Use the user's authorized target and session constraints. Prepare scripts, data,
 
 Start with a low-load smoke test to verify responses and business assertions. Add only the expected-load, stepped-load, burst, or sustained test needed to resolve the question. Monitor application and load-generator health. Use disposable or authorized test data and stub side-effecting integrations when appropriate; report the representativeness tradeoff of stubs. Test failure/degraded-capacity scenarios only when relevant and authorized.
 
+For correctness gates and before/after checks around a performance change, read [Regression design](references/regression-design.md). Match assertions and execution boundaries to the behavior; a passing unit suite or an old running build does not establish current end-to-end capacity.
+
 Correlate client latency, throughput, errors, and dropped work with server CPU/memory, database waits/query behavior, connection pools, queue depth/age, cache behavior, and dependency latency as relevant. Distinguish time spent waiting from CPU execution. Use profiling/tracing to test the suspected bottleneck rather than guessing a rewrite. Change a justified factor, then compare an equivalent workload when additional measurements are needed.
 
 ## Report exactly what was established

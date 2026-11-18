@@ -1,0 +1,3 @@
+interface:
+  display_name: "Plan Safe Migrations"
+  short_description: "Plan compatible data, save and reflected-asset transitions"

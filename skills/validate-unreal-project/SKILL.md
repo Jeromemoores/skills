@@ -11,6 +11,8 @@ For an existing project, identify pending source-control/unsaved editor work and
 
 ## Build and behavior evidence
 
+For new or repaired regression coverage, read [Regression design](references/regression-design.md). Select the engine test level, meaningful oracle, fixture lifecycle and current build needed for the claim; a test framework name does not establish representative coverage.
+
 Choose an appropriately scoped real Unreal Build Tool/UHT target for source/reflection/module changes. Derive the correct executable, arguments, target, and configuration from the project/version rather than guessing them. Keep editor/runtime-only/server target differences visible. A generic compiler parse or code-generation stub does not prove a reflected Unreal build works.
 
 Live Coding/Hot Reload, a fresh build, editor load/Blueprint compile, PIE, standalone, automation, cook/package, and a launched packaged build establish different things. Use the checks affected by the change and record which were actually run. A successful patch or command acknowledgment alone is not packaged/runtime validation. Structural/reflection/default changes can need a different rebuild/reload process; inspect the applicable docs and preserve user work before any required editor restart.

@@ -3,3 +3,5 @@ implement-task
 review-and-repair-code
 audit-code-reuse
 dependency-docs
+review-security
+plan-safe-migrations

@@ -43,6 +43,8 @@ Inspect a connected editor's project/version/state before operating it. Use avai
 
 ## Verify the changed behavior
 
+Use `review-security` for a requested security review or affected untrusted-client/plugin boundary, and `plan-safe-migrations` for save/serialized/reflected-asset compatibility changes when installed. Follow engine-specific references and tests; web ASVS requirements do not establish Unreal networking or serialization behavior. A generic source rename can have persisted consumers even when compilation succeeds.
+
 For a code review, assess useful maintainability and efficiency improvements as well as defects. Follow the review-recommendation criteria in [Unreal C++ and code quality](references/unreal-code-quality.md); `review-and-repair-code` supplies the shared reporting workflow when installed. Give concrete locations, bounded changes, expected benefits/tradeoffs, and verification, keeping optional refactors separate from acceptance defects. A review request does not authorize implementing its suggestions.
 
 Use `validate-unreal-project` when available, or run the relevant real Unreal build/UHT, automation, editor/runtime, and cook/package checks directly. Choose checks based on impact. A successful generic C++ syntax check, bridge response, Live Coding patch, or editor compile does not by itself prove the packaged target or gameplay works. Check lifetimes, repeated start/stop, relevant failure paths, and multiplayer roles when affected. Base optimizations on representative profiling.

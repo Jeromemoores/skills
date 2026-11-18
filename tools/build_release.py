@@ -30,7 +30,7 @@ def build():
         shell = (ROOT / "install.sh").read_text(encoding="utf-8").replace("skill_set=all\n", f"skill_set={selected}\n", 1)
         readme = (ROOT / "README.md").read_text(encoding="utf-8") if selected == "all" else (
             f"# {selected.title()} development skills v{version}\n\n"
-            f"Includes {len(names)} skills for {selected.title()}, including four shared roles and dependency documentation.\n\n"
+            f"Includes {len(names)} skills for {selected.title()}, including shared workflow, dependency, security and migration skills.\n\n"
             "On Windows, extract this ZIP and double-click `install.cmd` to install for both agents without PowerShell or network access. "
             "Alternatively run `.\\install.ps1` on Windows or `sh ./install.sh` on macOS/Linux. "
             "Use `-Target Claude` / `-Target Codex` or `--target claude` / `--target codex` to select one.\n\n"
@@ -40,6 +40,7 @@ def build():
             "macOS/Linux: `sh ./check-dependencies.sh PROJECT_DIR` / `sh ./ensure-dependency-docs.sh PROJECT_DIR`. npm and Yarn Classic/modern/PnP are supported.\n\n"
             "Full guidance and other bundles: https://github.com/Jeromemoores/skills\n")
         contents = {"VERSION": f"{version}\n".encode(), "README.md": readme.encode(),
+                    "VALIDATION.md": (ROOT / "VALIDATION.md").read_bytes(),
                     "install.ps1": ps.encode(), "install.sh": shell.encode(),
                     "install.cmd": (ROOT / "install.cmd").read_bytes()}
         for command in ["check-dependencies", "ensure-dependency-docs"]:

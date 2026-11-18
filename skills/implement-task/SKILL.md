@@ -25,6 +25,8 @@ Before adding a production helper, search for existing behavior by domain operat
 
 Run the existing targeted checks appropriate to the task. Add a behavioral regression test when a meaningful defect or requirement needs it; avoid tests that merely restate a trivial implementation. Check relevant failure paths and document any environment limitation. Do not delete assertions, skip failing tests, weaken types, swallow errors, or introduce fake/stubbed behavior merely to make checks pass. A deliberate product-approved stub must be identified as such.
 
+When substantial test design is needed and the shared reviewer is installed, consult its [Regression evidence](../review-and-repair-code/references/regression-test-design.md). Otherwise establish the same essentials directly: observable contract, independent expected result, representative fixture, correct execution boundary and source/build snapshot.
+
 Return a concise handoff: task ID, changed files and behavior, relevant docs actually read, exact checks executed and outcomes, known failures/limitations, and interface or integration concerns. Distinguish completed code from untested claims. In a team workflow, hand the task back as ready for review; do not claim independent review or update another role's acceptance record. Respond to concrete findings and keep any repair within assigned ownership.
 
 If repeated attempts are not resolving the same issue, provide the reproduction and evidence to the coordinator instead of producing an endless sequence of speculative rewrites. Do not switch models, expand budgets, or spawn additional agents unless the user's workflow and runner authorize it.

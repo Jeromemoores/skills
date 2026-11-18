@@ -1,30 +1,29 @@
-# v1.1.0 validation
+# v1.2.0 validation
 
-Validated on Windows with Python 3.14, Windows PowerShell 5.1, Command Prompt and Git Bash. Python 3.11+ is the supported helper prerequisite; macOS/Linux distributions were not independently exercised.
+Validated on Windows with Python 3.14, Windows PowerShell 5.1, Command Prompt and Git Bash. Documentation helpers require Python 3.11+; macOS/Linux distributions were not independently exercised.
 
-## Automated evidence
+## Packaging and installer evidence
 
-`python tests/run_tests.py`: 94 tests passed. Coverage includes existing web/Unreal helper behavior, update/prune, matching selections, failed downloads, all/split bundles, local/bootstrap/offline installers, checksum rejection, retained machine preferences, removal of obsolete skill files and preservation of unrelated skills.
+`python tests/run_tests.py`: **94 tests passed** in 94 seconds. Coverage includes existing Web/Unreal documentation selection, dependency discovery and npm/Yarn/PnP behavior, cache/update/prune behavior, failed retrieval, all/split archives, local/bootstrap/offline installers, checksum rejection, retained cache preferences, obsolete-file cleanup and unrelated-skill preservation.
 
-Dependency tests cover npm, Yarn Classic and modern/PnP without installing packages; scoped/grouped selectors, aliases, workspaces, patched/private dependencies, active-manager selection, stale/ambiguous locks, React/Next detection, exact/major cache reuse, changed inventory, project-scoped search and pruning pins. Retrieval checks include publisher identity, artifact checksums, bounded archives, source hosts, and explicitly limited coverage. After the final fixture/output refinements, all 36 dependency tests passed again.
+All **14 skill entrypoints** passed the skill-creator validator. Local Markdown reference links were checked for broken targets. The validator's PyYAML prerequisite stays in an ignored validation-only directory; shipped documentation helpers remain standard-library-only.
 
-All 11 skill entrypoints passed the skill-creator validator. The validator's PyYAML prerequisite was installed into an ignored validation-only directory, not a project or global environment. Packaged helpers themselves use the Python standard library.
+Bundles contain 11 Web skills, 10 Unreal skills, or all 14 unique skills. Security and migration guidance is shared; accessibility appears only in Web. Validation guidance ships inside the archives. Downloaded corpora, engine headers, machine preferences, temporary evaluation fixtures and private project code are excluded.
 
-## Live source checks
+## Independent skill forward-test
 
-- Retrieved Bootstrap 5.3.9 maintainer docs from `twbs/bootstrap`: 120 documents. The source adapter handles its newer Astro layout and older documentation layouts.
-- Retrieved the `TryGhost/node-sqlite3` 6.0.1 maintainer README and seven selected SQLite engine pages. Driver and engine coverage have separate cache identities.
-- Changed a disposable fixture to Bootstrap 5.3.8 and sqlite3 6.0.0; missing-source retrieval was patched to fail if called. Both reused same-major snapshots with zero fetches; related SQLite family docs reused their cache too. Bootstrap modal search returned five scoped results.
-- Repeated that offline reuse using a modern Yarn/PnP fixture with no node_modules. No errors or fetches occurred.
-- Parsed 2,662 selectors from the Yarn maintainers' actual generated Berry lockfile at `https://raw.githubusercontent.com/yarnpkg/berry/master/yarn.lock`.
-- Verified the live shared library: 4,679 stored files passed checksum validation and SQLite integrity was `ok`.
+A separate agent context read the three new skills and only relevant references, then reviewed small source-only fixtures under a realistic review-only brief. It received requirements and raw artifacts, without the parent agent's expected findings or conclusions. No fixture or application source was modified.
 
-Fixtures and downloaded corpora are outside published source/release payloads. Sources keep their upstream URLs, revisions and license notices. These observations validate helper behavior, not application correctness or Unreal runtime compatibility.
+The evaluation identified source-supported ownership and server-price failures, keyboard/reset validation problems, and a destructive data conversion that broke an explicit old/new-version overlap requirement. It distinguished an intentional synthetic identity selector from an authorization defect, kept Web ASVS separate from Unreal ownership semantics, preserved review-only scope, and reported missing browser/database/engine/runtime evidence. It did not claim a live exploit, accessibility conformance, migration rehearsal, restore or game build.
 
-## Included maintenance changes
+A minor migration instruction ambiguity was corrected after this pass: implementation/rehearsal assignments should exercise disposable copies, while review-only or unidentified-format work reports a concrete transition and evidence gaps instead of inventing an execution target. This one scenario pass is evidence about the sampled skill behavior, not a general guarantee of agent reliability.
 
-This release retains the preceding local maintenance work: optional source configuration for the shared Unreal runtime, React-major selection evidence, recorded inputs/topics, refresh/update/prune commands, pruning only after successful updates, and installer replacement of outdated skill files while retaining local cache preferences. Dependency selections also pin their snapshots during pruning.
+## Documentation basis and coverage
 
-## Boundaries
+Security guidance links OWASP ASVS and matching Epic RPC references; accessibility links W3C WCAG, WAI forms/keyboard and evaluation guidance. Migration guidance links the actual database DDL documentation and Epic save/load/Core Redirects references. Agents must still match project versions and read relevant sections before consequential API claims; a link in a skill is not proof that a project decision was verified.
 
-Same-major reuse does not prove minor/patch API compatibility; exact mode is available. General npm/PyPI fallbacks contain publisher README/description material rather than full manuals. Go coverage may need additional subpackage pages. Python ranges/markers and complex Poetry declarations, C++ baselines, and many Unreal plugin versions need explicit inspection. pnpm needs installed metadata or independently established versions. A docs check does not install packages, perform a vulnerability audit, or continuously watch while no agent/watcher is running.
+The earlier v1.1.0 live helper checks remain historical evidence: Bootstrap/SQLite retrieval, zero-fetch same-major reuse with npm and modern Yarn fixtures, parsing 2,662 real Yarn selectors, and verifying 4,679 cached files with SQLite integrity `ok`. They were not repeated as live network benchmarks for this prose/packaging update. The offline regression suite was rerun.
+
+## Limits
+
+The new specialists provide scoped guidance and evidence boundaries. They do not certify an application, replace manual accessibility/assistive-technology checks, authorize production migrations, or establish Unreal runtime compatibility without the appropriate real environment. Test-design references distinguish stubs, builds, source snapshots and runtime assertions; existing capacity evidence still requires representative measurements. No production application or game was audited or migrated by this update.

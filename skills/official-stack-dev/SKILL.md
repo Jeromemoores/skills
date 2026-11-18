@@ -66,6 +66,8 @@ If web access fails, use local version-matched package declarations/source, `go 
 
 ## Implement and verify
 
+Use available specialized companions when the change calls for them: `review-security` for consequential trust boundaries, `review-accessibility` for accessibility journeys, and `plan-safe-migrations` before database or persisted API/data compatibility changes. Preserve review-only scope and use proportionate checks; ordinary UI edits do not require unrelated audits.
+
 For function/module additions, refactors, or documentation changes, read [Code quality](references/code-quality.md). Use cohesive responsibilities, visible side-effect boundaries, useful contract/rationale documentation, and a search for existing behavior before introducing a production helper. Use `audit-code-reuse` when available for substantial duplication or unused-code questions; an absent text reference alone does not justify deletion.
 
 Adapt documented APIs to the project's requirements instead of transplanting a whole example. Preserve relevant behavior, follow existing organization, and introduce dependencies only for a concrete need.

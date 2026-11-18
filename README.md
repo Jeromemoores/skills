@@ -4,7 +4,7 @@ Web development and Unreal Engine skill sets for Claude Code and Codex. They sup
 
 ## Install with one command
 
-**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the eight skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
+**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the 11 skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
 
 **Web only — Windows PowerShell (recommended for the work laptop):**
 
@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install-un
 curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install.sh | sh
 ```
 
-Web-only and Unreal-only each install eight skills, including the four shared roles and dependency documentation. The combined option installs all 11. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Each installed skill folder is replaced, so files removed by a newer release do not linger; machine-local `library-location.json`/`unreal-location.json` preferences and unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
+Web-only installs 11 skills; Unreal-only installs 10. Both include the four shared roles, dependency documentation, security review and safe-migration planning. The combined option installs all 14 unique skills. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Each installed skill folder is replaced, so files removed by a newer release do not linger; machine-local `library-location.json`/`unreal-location.json` preferences and unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
 
 The commands execute this repository's installer. You can inspect/download it first or use a local release archive instead. Windows needs PowerShell 5.1+; macOS/Linux needs `sh`, `curl`, `unzip`, and `sha256sum` or `shasum`.
 
@@ -54,7 +54,7 @@ sh ./install.sh --set unreal --target codex
 sh ./install.sh --set all --target both
 ```
 
-Each set includes the four shared roles and `dependency-docs`. `-UserRoot PATH` / `--user-root PATH` selects another profile root, useful for testing an installation. On other hosts, copy the desired complete folders from `skills/` to the agent's supported skill directory.
+Each set includes the four shared roles, `dependency-docs`, `review-security` and `plan-safe-migrations`. Web also includes `review-accessibility`. `-UserRoot PATH` / `--user-root PATH` selects another profile root, useful for testing an installation. On other hosts, copy the desired complete folders from `skills/` to the agent's supported skill directory.
 
 ## Included skills
 
@@ -63,6 +63,7 @@ Each set includes the four shared roles and `dependency-docs`. `-UserRoot PATH` 
 | Web | `official-stack-dev` | React, Next.js, Go, CSS, JavaScript and browser APIs using maintainer docs/MDN |
 | Web | `plan-web-capacity` | Workload, architecture, bottlenecks and growth planning |
 | Web | `validate-web-capacity` | Representative, bounded performance measurements |
+| Web | `review-accessibility` | W3C-based keyboard, focus, form, visual and assistive-technology review |
 | Unreal | `official-unreal-dev` | Epic/C++ docs and matching installed engine headers |
 | Unreal | `plan-unreal-project` | Gameplay architecture, ownership and target budgets |
 | Unreal | `validate-unreal-project` | Real build/runtime, automation, packaging and profiling evidence |
@@ -71,6 +72,8 @@ Each set includes the four shared roles and `dependency-docs`. `-UserRoot PATH` 
 | Shared | `review-and-repair-code` | Correctness checks and useful refactor/optimization recommendations |
 | Shared | `dependency-docs` | Dependency discovery, version-aware docs caching and coverage checks; npm/Yarn, Go, Python and selected C++/Unreal inputs |
 | Shared | `audit-code-reuse` | Find compatible existing behavior, duplication and potentially unused code |
+| Shared | `review-security` | Focused trust-boundary/security review with separate Web and Unreal guidance |
+| Shared | `plan-safe-migrations` | Database/API and Unreal save/reflected-asset compatibility, rehearsal and recovery planning |
 
 For example: “Use official-stack-dev to extend this existing repo. Establish its versions, conventions and baseline before changing behavior.” Or: “Use official-unreal-dev and review-and-repair-code to review this gameplay system; suggest cohesive function boundaries and evidence-based optimizations without making edits.”
 
@@ -106,6 +109,16 @@ python "PATH_TO_INSTALLED_SKILL/scripts/dependency_docs.py" watch --project "PRO
 ```
 
 Stop with Ctrl+C. No background service or automatic package-manager hook is installed. A skill cannot monitor changes while no agent/watcher is running. Search/read only the relevant indexed sections rather than loading all docs into context. See [the skill](skills/dependency-docs/SKILL.md) for exact mode, transitive inventory, source registration, coverage and private/local dependency handling. `DEPENDENCY_DOCS_HOME` overrides its cache; otherwise it shares the web documentation library.
+
+## Specialized reviews and migrations
+
+Use `review-security` for requested security assessments and consequential trust-boundary changes. It traces reachable effects and legitimate/invalid caller cases, using OWASP ASVS for Web and matching Epic ownership/networking evidence for Unreal. It distinguishes intentional synthetic identities from production authentication and preserves review-only scope.
+
+Use `review-accessibility` for affected Web accessibility journeys. It connects W3C criteria to actual keyboard/focus, form/reset/status, visual and assistive-technology evidence, with explicit limits on automated scans and conformance claims. This skill is in the Web bundle only.
+
+Use `plan-safe-migrations` before consequential schema, persisted API/data, game-save or reflected-asset transitions. It establishes compatibility windows, preserves atomicity/data meaning, rehearses older-format fixtures and interruption/recovery on copies, and separates planning from live execution. Core Redirects are not treated as a universal save converter.
+
+The existing reviewer and Web/Unreal validation skills now include regression-test design: independent oracles, representative fixtures, deterministic ordering, correct runtime boundaries and a source/build snapshot. Skills route relevant work without imposing unrelated audits on ordinary edits. See [validation evidence](VALIDATION.md) for packaging checks and the independent source-only scenario evaluation.
 
 ## Review and validation approach
 

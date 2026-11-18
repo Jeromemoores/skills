@@ -23,6 +23,8 @@ Divide the work into small verifiable tasks with dependency order and explicit o
 
 ## Route work deliberately
 
+Route a requested security assessment to `review-security`, affected web accessibility work to `review-accessibility`, and consequential persisted-data/reflected-asset transitions to `plan-safe-migrations` when available. Include relevant findings/compatibility obligations in the normal task packet; do not turn every task into three additional audits or treat a plan as authorization to execute production changes.
+
 For an explicitly requested delegated workflow, use available agent tools to assign ready tasks. Pass only the relevant requirements, contracts, references, files, baseline, and checks. Delegate independent file sets in parallel; serialize overlapping edits and dependent tasks. Prefer a narrow implementation model for well-specified routine work. Keep ambiguous design, concurrency/data-integrity decisions, and difficult diagnosis with an appropriately capable role. Do not assume a model is adequate solely from its price or label.
 
 Respect the user's selected models, available tools, and time/cost limits. If model routing or delegation is unavailable, perform sequential role passes or give manual handoffs; disclose that fallback rather than claiming separate agents or lower-cost execution occurred. A skill does not provision cloud services or bypass parent permissions.
