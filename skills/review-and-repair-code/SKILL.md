@@ -25,6 +25,8 @@ Consult the version-matched maintainer documentation for disputed or consequenti
 
 Translate consequential documented contracts into concrete obligations and trace their implementation: notification on mutation, lifetime/cleanup ownership, retry identity, or atomicity as applicable. Check callbacks and adapters actually fulfill the contract rather than merely importing the correct API. Derive at least one focused adversarial check for a high-impact guarantee touched by the change, independently of the builder's happy-path tests; reuse equivalent coverage when it exists. Select relevant cases rather than imposing an unrelated test matrix.
 
+For changed producers/consumers or migrated values, check that accepted data remains usable across the affected path: emit/serialize, validate/parse, then perform the next operation. Follow generated outputs through the real consumer; successful migration and separately passing parser tests do not establish this guarantee. Read [Regression evidence](references/regression-test-design.md) for boundary selection, round-trip invariants and compatibility limits.
+
 For asynchronous/shared state, follow work across owner destruction/remount, resource/identity changes, and out-of-order completions when supported. Verify that old work cannot clear newer pending state and that the action a user sees submits the operation it promises. For retry claims involving remote effects, exercise commit-then-response-loss at the real integration boundary when feasible and reconcile authoritative state; mocked responses or server-only deduplication tests leave client recovery unproved. Use the relevant stack's lifecycle/reference guidance and state precisely which cases remain untested.
 
 ## Produce actionable findings

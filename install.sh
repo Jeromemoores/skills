@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-version=1.2.0
+version=1.2.1
 release="https://github.com/Jeromemoores/skills/releases/download/v$version"
 target=both
 skill_set=all

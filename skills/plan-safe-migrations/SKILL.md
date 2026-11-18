@@ -21,6 +21,8 @@ Specify preconditions, expected volume/cost, relevant lock/downtime limits, prog
 
 Define validation and recovery with the actual data model: counts plus meaningful invariants, converted values, relationships and application behavior. State what an application rollback can read after new writes, what a restore would lose, and when a forward correction is safer. A backup's existence is not a demonstrated restore procedure.
 
+Include downstream usability in migration acceptance. Values admitted or preserved by the transition must work through the supported new readers, validators and affected operations, including any tokens or references those operations generate. Reconcile mismatched representation, length/range/precision and normalization limits explicitly; a permissive library parser is not the application's support policy. Test representative legacy/boundary values through the real consumer, and distinguish constructed unsupported imports from supported compatibility failures. Preserve required historical values when canonicalizing a transport token or reference.
+
 ## Rehearse within scope
 
 For an implementation/rehearsal assignment, prepare scripts and exercise representative disposable copies before consequential execution. Include an existing older dataset/save, the intended upgrade path, relevant supported reader/writer combinations, interruption/retry and recovery. Test the proposed failure boundary, not just an empty target schema or freshly created save. Keep source and target fingerprints/evidence sufficient to assess preservation without exposing personal data. For review-only work or an unidentified database/format, return the concrete transition and missing evidence; do not invent an execution target to satisfy a rehearsal step.

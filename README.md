@@ -124,6 +124,8 @@ The existing reviewer and Web/Unreal validation skills now include regression-te
 
 Agents connect consequential documentation contracts to implementation mechanisms and failure-case checks. Review includes ownership, asynchronous ordering and retry recovery, plus concrete recommendations for cohesion, reuse and efficiency. Optimizations distinguish measured evidence from hypotheses. Existing repos retain their architecture, compatible APIs/assets/data and pending work; baseline failures remain separate from regressions.
 
+v1.2.1 strengthens cross-boundary compatibility checks: accepted legacy values and emitted artifacts must remain usable by downstream validators and operations. Builders and reviewers test the actual round trip, account for representation/length/precision differences, preserve required historical data, and distinguish supported compatibility failures from constructed unsupported imports.
+
 Skills guide behavior; they do not guarantee correct code or capacity. Actual multi-agent/model routing belongs to the runner. Unreal runtime checks require the appropriate engine/toolchain, and capacity claims require representative measurements.
 
 ## Development

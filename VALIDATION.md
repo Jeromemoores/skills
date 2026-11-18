@@ -1,4 +1,18 @@
-# v1.2.0 validation
+# v1.2.1 validation
+
+## v1.2.1 scope and current evidence
+
+This patch updates the shared implementation, review, migration and planner-handoff guidance, so it ships in both Web and Unreal bundles. It requires accepted migrated values and emitted artifacts to remain usable through downstream validation and the next operation, with explicit supported-domain/limit policies. No application source or existing database was edited by this skills update.
+
+The motivating independent application review reproduced a migration that accepted a constructed long-fraction timestamp and emitted a pagination cursor rejected by the next request. Normal application writers did not generate that representation; the finding was classified as a low-priority compatibility edge. The guidance generalizes the producer/consumer mismatch rather than prescribing a timestamp length or requiring every project to support arbitrary imported data.
+
+`python tests/run_tests.py`: **94 tests passed in 94.815 seconds**, including helper, bundle and installer regressions. All **14 skill entrypoints** passed the skill-creator validator, and local Markdown reference targets were checked. The validator ran in UTF-8 mode with PyYAML isolated in an ignored validation-only directory. No runtime helper logic or dependencies changed in this patch.
+
+Installed all 14 skills into both local agent directories. Verified 122 installed files against source, preserved machine-local documentation preferences, and checked bundled skill Markdown against final source in the Web, Unreal and combined archives.
+
+The guidance was inspected for the demonstrated Web cursor/migration mismatch and the equivalent Unreal persisted-reference consumer boundary. Checks remain conditional on affected contracts and supported data; ordinary stateless edits do not acquire an unrelated migration/runtime requirement. This is same-context instruction review plus structural/packaging evidence, not a new independent agent behavior evaluation or proof that future agents cannot miss an edge case. Historical v1.2.0 evidence below remains separately labeled.
+
+## Historical v1.2.0 evidence
 
 Validated on Windows with Python 3.14, Windows PowerShell 5.1, Command Prompt and Git Bash. Documentation helpers require Python 3.11+; macOS/Linux distributions were not independently exercised.
 

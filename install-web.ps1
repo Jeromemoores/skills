@@ -5,5 +5,5 @@ param(
     [string]$UserRoot = [Environment]::GetFolderPath('UserProfile')
 )
 $ErrorActionPreference = 'Stop'
-$installer = Invoke-RestMethod 'https://raw.githubusercontent.com/Jeromemoores/skills/v1.2.0/install.ps1'
+$installer = Invoke-RestMethod 'https://raw.githubusercontent.com/Jeromemoores/skills/v1.2.1/install.ps1'
 & ([scriptblock]::Create($installer)) -SkillSet Web -Target $Target -UserRoot $UserRoot
