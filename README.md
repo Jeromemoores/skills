@@ -4,41 +4,43 @@ Web development and Unreal Engine skill sets for Claude Code and Codex. They sup
 
 ## Install with one command
 
+**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the seven skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
+
 **Web only — Windows PowerShell (recommended for the work laptop):**
 
 ```powershell
-irm https://github.com/Jeromemoores/skills/releases/latest/download/install-web.ps1 | iex
+irm https://raw.githubusercontent.com/Jeromemoores/skills/main/install-web.ps1 | iex
 ```
 
 **Unreal only — Windows PowerShell:**
 
 ```powershell
-irm https://github.com/Jeromemoores/skills/releases/latest/download/install-unreal.ps1 | iex
+irm https://raw.githubusercontent.com/Jeromemoores/skills/main/install-unreal.ps1 | iex
 ```
 
 **Both sets — Windows PowerShell:**
 
 ```powershell
-irm https://github.com/Jeromemoores/skills/releases/latest/download/install.ps1 | iex
+irm https://raw.githubusercontent.com/Jeromemoores/skills/main/install.ps1 | iex
 ```
 
 **macOS/Linux — choose one terminal command:**
 
 ```sh
-curl -fsSL https://github.com/Jeromemoores/skills/releases/latest/download/install-web.sh | sh
-curl -fsSL https://github.com/Jeromemoores/skills/releases/latest/download/install-unreal.sh | sh
-curl -fsSL https://github.com/Jeromemoores/skills/releases/latest/download/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install-web.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install-unreal.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install.sh | sh
 ```
 
 Web-only and Unreal-only each install seven skills, including the four shared roles. The combined option installs all 10. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Existing files belonging to these skill folders are updated; unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
 
-The commands execute this repository's installer. You can inspect/download it first or use a local release archive instead. Windows needs PowerShell 5.1+; macOS/Linux needs `sh`, `curl`, `tar`, and `sha256sum` or `shasum`.
+The commands execute this repository's installer. You can inspect/download it first or use a local release archive instead. Windows needs PowerShell 5.1+; macOS/Linux needs `sh`, `curl`, `unzip`, and `sha256sum` or `shasum`.
 
 Installing the skills does not require Python. **Downloading/searching documentation requires Python 3.11+ with SQLite FTS5 and Git.** Install those through your usual workstation setup if missing. Unreal header references use your own authorized engine installation. Installing skills does not install an engine, change models, or configure every ChatGPT chat/account.
 
 ## Choose a set or agent
 
-The release has separate `web-skills`, `unreal-skills`, and combined `skills` ZIP/tarball downloads. Extracted packages default to their selected set. To choose an agent, or choose a set from a full clone/combined bundle, run:
+The release has separate `web-skills`, `unreal-skills`, and combined `skills` ZIP downloads. Extracted packages default to their selected set. To choose an agent, or choose a set from a full clone/combined bundle, run:
 
 ```powershell
 .\install.ps1 -SkillSet Web -Target Claude
@@ -92,4 +94,4 @@ python tests/run_tests.py
 python tools/build_release.py
 ```
 
-The offline suite covers documentation selection/retrieval, selection-specific bundles and installer behavior. Build output is written to `dist/`: separate ZIP/tarballs for Web, Unreal and combined, six one-command installers, and `SHA256SUMS`. The release build checks that installer versions match `VERSION`. Keep shared roles in one place under `skills/`; the set manifests select which ones to install.
+The offline suite covers documentation selection/retrieval, selection-specific bundles and installer behavior. Build output is written to `dist/vVERSION/`: three ZIPs (Web, Unreal and combined) plus `SHA256SUMS`. The one-command installers live in the repository, keeping release downloads uncluttered. GitHub also adds its two automatic source archives. The release build checks that installer versions match `VERSION`. Keep shared roles in one place under `skills/`; the set manifests select which ones to install.

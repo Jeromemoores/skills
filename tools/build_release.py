@@ -1,10 +1,7 @@
 """Build portable release archives without documentation caches or local settings."""
 from pathlib import Path
-import gzip
 import hashlib
-import io
 import re
-import tarfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,8 +15,13 @@ def build():
         match = re.search(pattern, (ROOT / installer).read_text(), re.MULTILINE)
         if not match or match[1] != version:
             raise ValueError(f"{installer} version differs from VERSION")
-    output = ROOT / "dist"
-    output.mkdir(exist_ok=True)
+    for selected in ["web", "unreal"]:
+        for extension in ["ps1", "sh"]:
+            wrapper = ROOT / f"install-{selected}.{extension}"
+            if f"/v{version}/install.{extension}" not in wrapper.read_text(encoding="utf-8"):
+                raise ValueError(f"{wrapper.name} version differs from VERSION")
+    output = ROOT / "dist" / f"v{version}"
+    output.mkdir(parents=True, exist_ok=True)
     assets = []
     for selected in ["all", "web", "unreal"]:
         sets = ["shared"] + (["web", "unreal"] if selected == "all" else [selected])
@@ -29,13 +31,15 @@ def build():
         readme = (ROOT / "README.md").read_text(encoding="utf-8") if selected == "all" else (
             f"# {selected.title()} development skills v{version}\n\n"
             f"Includes {len(names)} skills for {selected.title()}, including the four shared roles.\n\n"
-            "Run `.\\install.ps1` on Windows or `sh ./install.sh` on macOS/Linux to install this set for both agents. "
+            "On Windows, extract this ZIP and double-click `install.cmd` to install for both agents without PowerShell or network access. "
+            "Alternatively run `.\\install.ps1` on Windows or `sh ./install.sh` on macOS/Linux. "
             "Use `-Target Claude` / `-Target Codex` or `--target claude` / `--target codex` to select one.\n\n"
             "Python 3.11+ and Git are needed when downloading/searching documentation. "
             "Unreal local header references require an authorized engine installation.\n\n"
             "Full guidance and other bundles: https://github.com/Jeromemoores/skills\n")
         contents = {"VERSION": f"{version}\n".encode(), "README.md": readme.encode(),
-                    "install.ps1": ps.encode(), "install.sh": shell.encode()}
+                    "install.ps1": ps.encode(), "install.sh": shell.encode(),
+                    "install.cmd": (ROOT / "install.cmd").read_bytes()}
         for group in sets:
             contents[f"skill-sets/{group}.txt"] = (ROOT / f"skill-sets/{group}.txt").read_bytes()
         for name in names:
@@ -51,22 +55,10 @@ def build():
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.external_attr = (0o100755 if name == "install.sh" else 0o100644) << 16
                 z.writestr(info, data)
-        tarball = output / f"{prefix}.tar.gz"
-        with tarball.open("wb") as raw, gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as compressed:
-            with tarfile.open(fileobj=compressed, mode="w") as tar:
-                for name, data in sorted(contents.items()):
-                    info = tarfile.TarInfo(f"{prefix}/{name}")
-                    info.size = len(data)
-                    info.mode = 0o755 if name == "install.sh" else 0o644
-                    tar.addfile(info, io.BytesIO(data))
-        suffix = "" if selected == "all" else f"-{selected}"
-        ps_asset, sh_asset = output / f"install{suffix}.ps1", output / f"install{suffix}.sh"
-        ps_asset.write_bytes(ps.encode())
-        sh_asset.write_bytes(shell.encode())
-        assets.extend([archive, tarball, ps_asset, sh_asset])
+        assets.append(archive)
     (output / "SHA256SUMS").write_text("".join(
         f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in assets), encoding="utf-8")
-    print(f"Built three bundles and six installers for v{version} in {output}")
+    print(f"Built three ZIPs and checksums for v{version} in {output}")
     return output
 
 

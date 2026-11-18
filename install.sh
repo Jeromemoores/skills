@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-version=1.0.0
+version=1.0.1
 release="https://github.com/Jeromemoores/skills/releases/download/v$version"
 target=both
 skill_set=all
@@ -27,12 +27,12 @@ case "$0" in
 esac
 if [ -z "$source_root" ]; then
     command -v curl >/dev/null 2>&1 || { echo 'curl is required to download the release.' >&2; exit 1; }
-    command -v tar >/dev/null 2>&1 || { echo 'tar is required to extract the release.' >&2; exit 1; }
+    command -v unzip >/dev/null 2>&1 || { echo 'unzip is required to extract the release.' >&2; exit 1; }
     work=$(mktemp -d "${TMPDIR:-/tmp}/jeromemoores-skills.XXXXXXXX")
     bundle=skills
     case "$skill_set" in web) bundle=web-skills ;; unreal) bundle=unreal-skills ;; esac
     package="$bundle-v$version"
-    archive="$package.tar.gz"
+    archive="$package.zip"
     curl -fLsS "$release/$archive" -o "$work/$archive"
     curl -fLsS "$release/SHA256SUMS" -o "$work/SHA256SUMS"
     expected=$(awk -v file="$archive" '$2 == file { print $1 }' "$work/SHA256SUMS")
@@ -45,7 +45,7 @@ if [ -z "$source_root" ]; then
         echo 'sha256sum or shasum is required to verify the release.' >&2; exit 1
     fi
     [ "$actual" = "$expected" ] || { echo 'Release checksum verification failed.' >&2; exit 1; }
-    tar -xzf "$work/$archive" -C "$work"
+    unzip -q "$work/$archive" -d "$work"
     source_root="$work/$package"
 fi
 
