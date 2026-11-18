@@ -348,7 +348,7 @@ def import_headers(root, info, refresh=False):
 
 def prepare(root, project=None, engine=None, version=None, topics=None, refresh=False, source="all"):
     info = detect(project, engine, version)
-    info.update(root=str(root), snapshots=[], errors=[])
+    info.update(root=str(root), snapshots=[], errors=[], topics=topics or ["core", "build"])
     changed = False
     with core.lock(root):
         if source in {"all", "cpp-msvc"}:
@@ -367,7 +367,7 @@ def prepare(root, project=None, engine=None, version=None, topics=None, refresh=
                 info["errors"].append({"source": "cpp-core-guidelines", "error": str(exc)})
         if source in {"all", "unreal-pages"}:
             try:
-                path, new, errors = sync_epic(root, info["engine_doc_version"], topics or ["core", "build"], refresh)
+                path, new, errors = sync_epic(root, info["engine_doc_version"], info["topics"], refresh)
                 info["snapshots"].append(core.load_json(path)["id"])
                 info["errors"].extend(errors)
                 changed |= new
@@ -403,6 +403,41 @@ def project_snapshots(root, project):
     if latest:
         ids = [value for value in ids if not value.startswith("unreal-pages-")] + [core.load_json(latest)["id"]]
     return ids
+
+
+def update(root):
+    """Refresh every recorded project's references and any standalone Epic version, then prune."""
+    result = {"root": str(root), "projects": [], "errors": [], "page_errors": []}
+    def refresh(**options):
+        info = prepare(root, refresh=True, **options)
+        result["projects"].append({"project": info["project"], "engine_doc_version": info["engine_doc_version"],
+                                   "snapshots": info["snapshots"]})
+        # A missing Epic page is routine; only a whole-source failure blocks pruning.
+        result["page_errors"].extend(e for e in info["errors"] if "page" in e)
+        result["errors"].extend(e for e in info["errors"] if "page" not in e)
+        return info["engine_doc_version"]
+    versions = set()
+    for path in sorted((root / "projects").glob("*.json")):
+        state = core.load_json(path, {})
+        if state.get("project") and Path(state["project"]).is_file():
+            try:
+                versions.add(refresh(project=Path(state["project"]), topics=state.get("topics")))
+            except Exception as exc:
+                result["errors"].append({"project": state["project"], "error": str(exc)})
+    standalone = core.active(root).get("unreal-pages")
+    manifest = core.load_json(root / "snapshots" / "unreal-pages" / standalone / "manifest.json", {}) if standalone else {}
+    if manifest.get("version") and manifest["version"] not in versions:
+        try:
+            refresh(version=manifest["version"])
+        except Exception as exc:
+            result["errors"].append({"version": manifest["version"], "error": str(exc)})
+    if result["errors"]:
+        result["pruned"] = None
+        result["warning"] = "Skipped pruning because an update step failed; no snapshots were removed."
+    else:
+        with core.lock(root):
+            result["pruned"] = core.prune(root)
+    return result
 
 
 def status(root):
@@ -446,6 +481,9 @@ def main(argv=None):
     add.add_argument("--refresh", action="store_true")
     for command in ["status", "verify", "index"]:
         sub.add_parser(command)
+    prn = sub.add_parser("prune", help="Delete snapshots unused by the active selection and existing recorded projects")
+    prn.add_argument("--dry-run", action="store_true", help="Report what would be removed without deleting")
+    sub.add_parser("update", help="Refresh recorded projects' references, then prune")
     args = parser.parse_args(argv)
     root = (args.root or data_root()).expanduser().resolve()
     if args.command == "detect":
@@ -474,6 +512,11 @@ def main(argv=None):
     elif args.command == "index":
         with core.lock(root):
             result = core.build_index(root)
+    elif args.command == "prune":
+        with core.lock(root):
+            result = core.prune(root, args.dry_run)
+    elif args.command == "update":
+        result = update(root)
     else:
         result = status(root)
     print(json.dumps(result, indent=2, ensure_ascii=False))

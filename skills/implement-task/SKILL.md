@@ -5,6 +5,8 @@ description: "Implement a bounded software task from a coordinator's packet or a
 
 # Implement Task
 
+When work uses third-party dependencies, use `dependency-docs` if installed to check resolved versions and prepare missing maintainer references before choosing consequential APIs. After changing a manifest or lockfile, rerun its `ensure` and include relevant version changes or coverage gaps in the handoff. Respect the project's npm/Yarn or other package manager; preparing docs does not require installing/upgrading packages. A limited publisher README may require additional matching API documentation.
+
 Complete the assigned outcome with a focused, reviewable change. The task packet and original requirements establish the scope; a smaller model or context window is a reason for a clearer assignment, not weaker correctness criteria.
 
 Read the applicable project instructions, task/contract revision, relevant existing code, and acceptance checks. Verify claimed dependencies are actually available. If the packet is incomplete, infer routine details from the project and ask the coordinator about a material unresolved interface/behavior decision. Continue independent work where possible; do not invent a shared API or silently expand the task.

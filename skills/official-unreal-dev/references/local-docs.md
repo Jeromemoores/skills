@@ -21,7 +21,11 @@ python "SKILL_DIR/scripts/unreal_docs.py" sync --version 5.8 --topics all
 python "SKILL_DIR/scripts/unreal_docs.py" sync --version 5.8 --topics core --refresh
 python "SKILL_DIR/scripts/unreal_docs.py" status
 python "SKILL_DIR/scripts/unreal_docs.py" verify
+python "SKILL_DIR/scripts/unreal_docs.py" update
+python "SKILL_DIR/scripts/unreal_docs.py" prune --dry-run
 ```
+
+`update` re-runs `ensure --refresh` for every recorded project (with its recorded topics) and the active standalone Epic version, then prunes. Missing individual Epic pages are reported but do not block pruning; a whole-source failure does. `prune` deletes snapshots that neither the active selection nor an existing recorded project uses, forgets projects whose `.uproject` no longer exists, and removes crash leftovers; preview with `--dry-run`.
 
 Example versions are not universal defaults: use the project's version. Cached Epic pages match major.minor, selected local headers match the actual installed patch/content fingerprints, and general C++ references match a repository revision. The header wrappers add headings/fences, so use the original file for exact source line citations. A limited cache is not the complete engine API. C++ source documentation includes links/includes that may require companion source or the rendered page.
 

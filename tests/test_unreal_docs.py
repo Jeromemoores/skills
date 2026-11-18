@@ -145,6 +145,30 @@ class UnrealDocsTests(unittest.TestCase):
         docs.os.utime(second, ns=(2000000000, 2000000000))
         self.assertEqual(docs.core.cached(self.root, "example", "main"), second)
 
+    def run_update(self, errors):
+        docs.core.write_json(self.root / "projects/game.json", {"project": str(self.project), "topics": ["networking"]})
+        docs.core.write_json(self.root / "projects/gone.json", {"project": str(self.base / "Gone.uproject")})
+        calls = []
+        def prepare(root, refresh=False, **options):
+            calls.append((refresh, options))
+            return {"project": str(options.get("project")), "engine_doc_version": "5.8", "snapshots": [], "errors": errors}
+        with patch.object(docs, "prepare", side_effect=prepare), \
+             patch.object(docs.core, "prune", return_value={"removed_snapshots": []}) as prune:
+            result = docs.update(self.root)
+        self.assertEqual(calls, [(True, {"project": self.project, "topics": ["networking"]})])
+        return result, prune
+
+    def test_update_refreshes_recorded_projects_and_tolerates_missing_pages(self):
+        result, prune = self.run_update([{"page": "missing-page", "error": "404"}])
+        prune.assert_called_once()
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(len(result["page_errors"]), 1)
+
+    def test_update_source_failure_skips_pruning(self):
+        result, prune = self.run_update([{"source": "cpp-msvc", "error": "offline"}])
+        prune.assert_not_called()
+        self.assertIsNone(result["pruned"])
+
 
 if __name__ == "__main__":
     unittest.main()

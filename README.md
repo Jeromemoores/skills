@@ -4,7 +4,7 @@ Web development and Unreal Engine skill sets for Claude Code and Codex. They sup
 
 ## Install with one command
 
-**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the seven skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
+**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the eight skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
 
 **Web only — Windows PowerShell (recommended for the work laptop):**
 
@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install-un
 curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install.sh | sh
 ```
 
-Web-only and Unreal-only each install seven skills, including the four shared roles. The combined option installs all 10. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Existing files belonging to these skill folders are updated; unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
+Web-only and Unreal-only each install eight skills, including the four shared roles and dependency documentation. The combined option installs all 11. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Each installed skill folder is replaced, so files removed by a newer release do not linger; machine-local `library-location.json`/`unreal-location.json` preferences and unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
 
 The commands execute this repository's installer. You can inspect/download it first or use a local release archive instead. Windows needs PowerShell 5.1+; macOS/Linux needs `sh`, `curl`, `unzip`, and `sha256sum` or `shasum`.
 
@@ -54,7 +54,7 @@ sh ./install.sh --set unreal --target codex
 sh ./install.sh --set all --target both
 ```
 
-Each set includes the four shared roles. `-UserRoot PATH` / `--user-root PATH` selects another profile root, useful for testing an installation. On other hosts, copy the desired complete folders from `skills/` to the agent's supported skill directory.
+Each set includes the four shared roles and `dependency-docs`. `-UserRoot PATH` / `--user-root PATH` selects another profile root, useful for testing an installation. On other hosts, copy the desired complete folders from `skills/` to the agent's supported skill directory.
 
 ## Included skills
 
@@ -69,6 +69,7 @@ Each set includes the four shared roles. `-UserRoot PATH` / `--user-root PATH` s
 | Shared | `coordinate-project` | Plan, contracts, task ownership and integration for requested agent teams |
 | Shared | `implement-task` | Focused implementation with documentation and acceptance evidence |
 | Shared | `review-and-repair-code` | Correctness checks and useful refactor/optimization recommendations |
+| Shared | `dependency-docs` | Dependency discovery, version-aware docs caching and coverage checks; npm/Yarn, Go, Python and selected C++/Unreal inputs |
 | Shared | `audit-code-reuse` | Find compatible existing behavior, duplication and potentially unused code |
 
 For example: “Use official-stack-dev to extend this existing repo. Establish its versions, conventions and baseline before changing behavior.” Or: “Use official-unreal-dev and review-and-repair-code to review this gameplay system; suggest cohesive function boundaries and evidence-based optimizations without making edits.”
@@ -80,6 +81,31 @@ The coding skills bundle Python standard-library helpers that detect project ver
 Web sources include React/Next.js/Go maintainer references and MDN CSS/JavaScript/browser APIs. Unreal sources include selected Epic pages, Microsoft C++ docs, C++ Core Guidelines, and selected headers from the local engine. Coverage and version limitations are explained in each coding skill's references. Upstream documents remain subject to their own licenses; downloaded corpora and engine headers are not distributed in this repo or its releases.
 
 For custom cache locations use `OFFICIAL_DOCS_HOME` and `UNREAL_DOCS_HOME`. No machine-specific cache paths are included. Current documentation is not permission to upgrade a project's dependencies or engine.
+
+## Dependency documentation and Yarn
+
+The new `dependency-docs` skill inventories existing repositories, prepares missing maintainer references, and notices dependency changes. Both skill sets include it. Agents are instructed to run it before consequential third-party API work and again after manifest/lockfile changes. It never installs packages or executes their install scripts.
+
+From a clone or extracted release ZIP:
+
+```bat
+check-dependencies.cmd "E:\path\to\project"
+ensure-dependency-docs.cmd "E:\path\to\project"
+```
+
+macOS/Linux: `sh ./check-dependencies.sh /path/to/project` and `sh ./ensure-dependency-docs.sh /path/to/project`. With no path, the current working directory is scanned. The check is offline/read-only; ensure downloads missing references. After installation, agents use the helper inside the installed `dependency-docs/scripts/` folder. These commands do not modify your shell profile or global PATH.
+
+**npm and Yarn Classic/modern are supported**, including Yarn Plug'n'Play without `node_modules`, grouped/scoped selectors, aliases and workspaces. The active package manager and resolved versions come from project evidence; conflicting/stale locks are reported. Yarn/PnP code is never executed. pnpm currently needs installed package metadata or an independently established version.
+
+Cache reuse is by ecosystem, actual package identity and major version. Exact matches are preferred; same-major references skip downloads and display the cached version. Use `--exact` for stricter coverage. A same-major guide does not prove minor/patch API availability. SQLite engine references are separate from its Node/Go drivers. Bootstrap has a curated fuller documentation source; general npm/PyPI fallbacks use the publisher's release README/description and are clearly marked limited coverage. Go module docs and selected C++/Unreal declarations are supported; unresolved versions/private sources remain visible gaps. This is not a complete resolver for every ecosystem or a vulnerability audit.
+
+For human dependency edits, agents rescan on subsequent work. An optional foreground watcher runs only when started explicitly:
+
+```text
+python "PATH_TO_INSTALLED_SKILL/scripts/dependency_docs.py" watch --project "PROJECT_DIR" --format table
+```
+
+Stop with Ctrl+C. No background service or automatic package-manager hook is installed. A skill cannot monitor changes while no agent/watcher is running. Search/read only the relevant indexed sections rather than loading all docs into context. See [the skill](skills/dependency-docs/SKILL.md) for exact mode, transitive inventory, source registration, coverage and private/local dependency handling. `DEPENDENCY_DOCS_HOME` overrides its cache; otherwise it shares the web documentation library.
 
 ## Review and validation approach
 

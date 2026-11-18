@@ -9,6 +9,8 @@ Inspect the implementation and its observable behavior rather than trusting a bu
 
 ## Establish the review boundary
 
+For affected third-party APIs or dependency changes, use `dependency-docs` when installed to check the actual resolved versions, changed inventory and reference coverage. Prepare missing relevant docs and verify consequential contracts against matching maintainer sources. Separate missing documentation from demonstrated code defects; unrelated undocumented dependencies do not by themselves block the review. Do not infer exact patch behavior from a same-major snapshot or complete API coverage from a publisher README.
+
 Read the original requirements, applicable project instructions, shared contracts, relevant acceptance checks, and the actual diff/change snapshot. Identify the baseline and relevant configuration/dependency versions. If other agents are writing concurrently, coordinate a stable snapshot or single-writer handoff before evaluating or repairing affected files. Preserve unrelated user/agent work.
 
 For established repositories, review integration with the existing module boundaries, conventions, compatible helpers, and downstream consumers. Compare relevant before/after checks on equivalent configuration where feasible. Separate pre-existing defects/failures from introduced regressions and avoid treating unrelated dirty files as this task's changes. If no diff is supplied, scope the review to the requested current behavior rather than inventing a clean baseline. Check API/data/asset compatibility when affected; broad rewrites or cleanup do not follow from finding an existing issue.

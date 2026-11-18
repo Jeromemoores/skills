@@ -12,9 +12,10 @@ from build_release import build
 ROOT = Path(__file__).resolve().parents[1]
 POWERSHELL = shutil.which("powershell") or shutil.which("pwsh")
 if os.name == "nt":
+    # git may resolve to Git\cmd\git.exe or Git\mingw64\bin\git.exe; never fall back to WSL's bash.
     git = shutil.which("git")
-    candidate = Path(git).parents[1] / "bin/bash.exe" if git else Path("missing")
-    SHELL = str(candidate) if candidate.is_file() else None
+    candidates = [parent / "bin/bash.exe" for parent in Path(git).parents] if git else []
+    SHELL = next((str(c) for c in candidates if c.is_file()), None)
 else:
     SHELL = shutil.which("sh")
 
@@ -84,11 +85,17 @@ function Invoke-RestMethod {
             args = [POWERSHELL, "-NoProfile", "-File", str(harness), str(assets), str(loader), str(self.profile), str(ROOT)]
         return subprocess.run(args, env=env, capture_output=True, text=True, timeout=60)
 
-    def run_sh(self, selected="all", target="both", bootstrap=False, corrupt=False, variant=None):
+    def run_sh(self, selected="all", target="both", bootstrap=False, corrupt=False, variant=None, bare=False):
         env = os.environ.copy()
         args = [SHELL]
         stdin = None
-        if not bootstrap:
+        cwd = None
+        if bare:
+            # `sh install.sh` from the extracted folder; an unreachable proxy makes any download fail.
+            args += ["install.sh"]
+            cwd = ROOT
+            env.update(https_proxy="http://127.0.0.1:9", HTTPS_PROXY="http://127.0.0.1:9")
+        elif not bootstrap:
             args += [(ROOT / "install.sh").as_posix()]
         else:
             assets = self.folder / "assets"
@@ -132,7 +139,7 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
         args += ["--user-root", self.profile.as_posix(), "--target", target]
         if not variant:
             args += ["--set", selected]
-        return subprocess.run(args, env=env, input=stdin, capture_output=True, text=True, timeout=60)
+        return subprocess.run(args, env=env, cwd=cwd, input=stdin, capture_output=True, text=True, timeout=60)
 
     def assert_ok(self, result):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -146,6 +153,41 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
         extra.write_text("existing user skill")
         self.assert_ok(self.run_ps())
         self.assertEqual(extra.read_text(), "existing user skill")
+
+    def assert_reinstall_replaces_skill_folders(self, run, agent=".claude"):
+        self.assert_ok(run())
+        skills = self.profile / agent / "skills"
+        stale = skills / "implement-task/references/removed-in-new-release.md"
+        stale.parent.mkdir(parents=True, exist_ok=True)
+        stale.write_text("old release file")
+        preference = skills / "official-stack-dev/scripts/library-location.json"
+        preference.write_text('{"preferred_root": "D:/docs"}')
+        unrelated = skills / "unrelated/SKILL.md"
+        unrelated.parent.mkdir()
+        unrelated.write_text("existing user skill")
+        self.assert_ok(run())
+        self.assertFalse(stale.exists())
+        self.assertFalse(stale.parent.exists())
+        self.assertEqual(preference.read_text(), '{"preferred_root": "D:/docs"}')
+        self.assertEqual(unrelated.read_text(), "existing user skill")
+
+    @unittest.skipUnless(POWERSHELL, "PowerShell is unavailable")
+    def test_powershell_reinstall_replaces_skill_folders(self):
+        self.assert_reinstall_replaces_skill_folders(self.run_ps)
+
+    @unittest.skipUnless(SHELL, "POSIX shell is unavailable")
+    def test_shell_reinstall_replaces_skill_folders(self):
+        self.assert_reinstall_replaces_skill_folders(self.run_sh)
+
+    @unittest.skipUnless(os.name == "nt", "Windows Command Prompt is unavailable")
+    def test_extracted_zip_reinstall_replaces_skill_folders(self):
+        version = (ROOT / "VERSION").read_text().strip()
+        with zipfile.ZipFile(self.assets / f"web-skills-v{version}.zip") as z:
+            z.extractall(self.folder / "extracted")
+        folder = self.folder / "extracted" / f"web-skills-v{version}"
+        self.assert_reinstall_replaces_skill_folders(lambda: subprocess.run(
+            [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", ".\\install.cmd", str(self.profile)],
+            cwd=folder, capture_output=True, text=True, timeout=60))
 
     @unittest.skipUnless(POWERSHELL, "PowerShell is unavailable")
     def test_powershell_web_claude_only(self):
@@ -200,6 +242,13 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
         self.assert_install("unreal", "codex")
 
     @unittest.skipUnless(SHELL, "POSIX shell is unavailable")
+    def test_shell_bare_script_name_installs_local_files(self):
+        result = self.run_sh(bare=True)
+        self.assert_ok(result)
+        self.assertNotIn("Downloaded release", result.stdout)
+        self.assert_install()
+
+    @unittest.skipUnless(SHELL, "POSIX shell is unavailable")
     def test_shell_download_bootstrap(self):
         self.assert_ok(self.run_sh(bootstrap=True))
         self.assert_install()
@@ -223,6 +272,24 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
                 actual = {name.split('/')[2] for name in zip_names if '/skills/' in name}
                 self.assertEqual(actual, self.expected(selected))
                 self.assertFalse(any('location.json' in n or '__pycache__' in n for n in zip_names))
+                for command in ['check-dependencies', 'ensure-dependency-docs']:
+                    for extension in ['cmd', 'sh']:
+                        self.assertIn(f'{prefix}/{command}.{extension}', zip_names)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows Command Prompt is unavailable')
+    def test_dependency_check_command_is_offline_and_preserves_project(self):
+        project = self.folder / 'existing application'; project.mkdir()
+        manifest = project / 'package.json'
+        manifest.write_text('{"packageManager":"yarn@4.10.3","dependencies":{"bootstrap":"5.3.8"}}')
+        env = os.environ.copy()
+        env['DEPENDENCY_DOCS_HOME'] = str(self.folder / 'empty-cache')
+        result = subprocess.run([os.environ.get('COMSPEC', 'cmd.exe'), '/d', '/c', '.\\check-dependencies.cmd', str(project)],
+                                cwd=ROOT, env=env, capture_output=True, text=True, timeout=20)
+        self.assert_ok(result)
+        self.assertIn('bootstrap', result.stdout)
+        self.assertIn('5.3.8', result.stdout)
+        self.assertFalse((self.folder / 'empty-cache').exists())
+        self.assertEqual([p.name for p in project.iterdir()], ['package.json'])
 
     def test_release_has_only_three_zips_and_checksums(self):
         version = (ROOT / "VERSION").read_text().strip()

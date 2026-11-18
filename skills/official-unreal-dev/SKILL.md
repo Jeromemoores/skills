@@ -17,6 +17,8 @@ For substantial architecture/performance changes, use `plan-unreal-project` if a
 
 ## Read matching references first
 
+For third-party libraries and enabled plugins, use `dependency-docs` when installed to inventory the project directory and prepare available maintainer references. Rerun its `ensure` after dependency changes. vcpkg baselines and Unreal plugin descriptors may lack resolved versions; report those gaps and inspect matching installed descriptors/headers. An engine's major number, a wrapper version, and a plugin's version are different identities. Cached upstream docs do not establish compatibility with a local patch or Unreal ABI. Use appropriate maintainer/project sources for private or unsupported dependencies.
+
 Read [Local documentation](references/local-docs.md) and run the bundled helper relative to this skill folder:
 
 ```text

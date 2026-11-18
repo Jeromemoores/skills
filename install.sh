@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-version=1.0.1
+version=1.1.0
 release="https://github.com/Jeromemoores/skills/releases/download/v$version"
 target=both
 skill_set=all
@@ -20,7 +20,7 @@ case "$skill_set" in all|web|unreal) ;; *) echo 'Use --set all, web, or unreal.'
 
 source_root=
 case "$0" in
-    */install.sh)
+    install.sh|*/install.sh)
         script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
         if [ -d "$script_dir/skills" ]; then source_root=$script_dir; fi
         ;;
@@ -49,6 +49,30 @@ if [ -z "$source_root" ]; then
     source_root="$work/$package"
 fi
 
+# Replace the whole skill folder so files dropped by a release do not linger,
+# but keep machine-local library preferences, which are never shipped.
+install_skill() {
+    destination=$2
+    case "$destination" in "$profile/.claude/skills/$name"|"$profile/.agents/skills/$name") ;; *) echo 'Unexpected skill destination.' >&2; exit 1 ;; esac
+    ancestor=$destination
+    while [ -n "$ancestor" ] && [ "$ancestor" != / ] && [ "$ancestor" != . ]; do
+        [ ! -L "$ancestor" ] || { echo "Refusing linked installation path: $ancestor" >&2; exit 1; }
+        parent=$(dirname -- "$ancestor")
+        [ "$parent" != "$ancestor" ] || break
+        ancestor=$parent
+    done
+    kept=$(mktemp -d "${TMPDIR:-/tmp}/skills-keep.XXXXXXXX")
+    if [ -d "$2" ]; then
+        (cd "$2" && find . -type f \( -name library-location.json -o -name unreal-location.json \) \
+            -exec sh -c 'mkdir -p "$1/${2%/*}" && cp "$2" "$1/$2"' sh "$kept" {} \;)
+        rm -rf "$2"
+    fi
+    mkdir -p "$2"
+    cp -R "$1/." "$2/"
+    cp -R "$kept/." "$2/"
+    rm -rf "$kept"
+}
+
 sets=shared
 case "$skill_set" in all) sets='shared web unreal' ;; web) sets='shared web' ;; unreal) sets='shared unreal' ;; esac
 for set_name in $sets; do
@@ -58,14 +82,10 @@ for set_name in $sets; do
         source="$source_root/skills/$name"
         [ -f "$source/SKILL.md" ] || { echo "Missing skill: $name" >&2; exit 1; }
         if [ "$target" = both ] || [ "$target" = claude ]; then
-            destination="$profile/.claude/skills/$name"
-            mkdir -p "$destination"
-            cp -R "$source/." "$destination/"
+            install_skill "$source" "$profile/.claude/skills/$name"
         fi
         if [ "$target" = both ] || [ "$target" = codex ]; then
-            destination="$profile/.agents/skills/$name"
-            mkdir -p "$destination"
-            cp -R "$source/." "$destination/"
+            install_skill "$source" "$profile/.agents/skills/$name"
         fi
     done < "$source_root/skill-sets/$set_name.txt"
 done

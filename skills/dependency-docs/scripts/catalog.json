@@ -1,0 +1,71 @@
+{
+  "npm:bootstrap": {
+    "kind": "github",
+    "repository": "twbs/bootstrap",
+    "tag": "v{version}",
+    "site": "https://getbootstrap.com/docs/{major}.{minor}",
+    "coverage": "maintainer-docs",
+    "fallback_readme": true,
+    "path_sets": [
+      [
+        "site/src/content/docs",
+        "site/src/content/callouts",
+        "site/src/components/shortcodes"
+      ],
+      [
+        "site/content/docs/{major}.{minor}"
+      ]
+    ]
+  },
+  "npm:sqlite3": {
+    "kind": "github",
+    "repository": "TryGhost/node-sqlite3",
+    "tag": "v{version}",
+    "paths": [],
+    "coverage": "maintainer-readme",
+    "related": [
+      "sqlite"
+    ],
+    "fallback_readme": true
+  },
+  "npm:better-sqlite3": {
+    "kind": "github",
+    "repository": "WiseLibs/better-sqlite3",
+    "tag": "v{version}",
+    "paths": [
+      "docs"
+    ],
+    "coverage": "maintainer-docs",
+    "related": [
+      "sqlite"
+    ],
+    "fallback_readme": true
+  },
+  "npm:sqlite": {
+    "kind": "npm",
+    "related": [
+      "sqlite"
+    ]
+  },
+  "go:modernc.org/sqlite": {
+    "kind": "go",
+    "related": [
+      "sqlite"
+    ]
+  },
+  "go:github.com/mattn/go-sqlite3": {
+    "kind": "go",
+    "related": [
+      "sqlite"
+    ]
+  },
+  "vcpkg:sqlite3": {
+    "kind": "sqlite"
+  },
+  "conan:sqlite3": {
+    "kind": "sqlite"
+  },
+  "engine:sqlite": {
+    "kind": "sqlite"
+  }
+}

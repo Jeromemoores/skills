@@ -58,7 +58,7 @@ Read only the stack references needed for the task:
 
 The helper requires Python 3.11+ and Git for first-time repository downloads, and no API key, MCP server, or paid service. If a prerequisite is missing, report it and use available official documentation tools. When searching the web, search within the official domain and open the actual result; a search snippet or an unopened URL is not verification. Use first-party migration guides, release notes, and tagged source/tests when the main docs do not resolve a version-specific detail.
 
-For additional dependencies, use their maintainers' documentation for the selected version. Hosting on GitHub or pkg.go.dev alone does not make a package an official React, Next.js, or Go project. Verify the owner and module/repository identity.
+For additional dependencies, use `dependency-docs` when installed: run its `ensure --project PROJECT_DIR` during onboarding and after manifest/lockfile changes, then search/read the relevant package sections before implementing consequential APIs. It supports npm and Yarn Classic/modern (including PnP) without installing packages. Reuse identifiable same-major snapshots while checking minor/patch availability; use `--exact` when needed. Inspect coverage: a publisher README is a limited reference, and private/local/unresolved dependencies need appropriate project or maintainer sources. Otherwise consult those sources directly. Hosting on GitHub or pkg.go.dev alone does not establish maintainer identity.
 
 If the user asks to investigate a community solution, verify its API assumptions against the applicable maintainer references or standards. Where documentation leaves a choice open, choose based on the user's needs and project conventions.
 
@@ -72,7 +72,7 @@ Adapt documented APIs to the project's requirements instead of transplanting a w
 
 For work crossing Next.js/React and Go, establish the existing request/response contract, serialization, authentication boundary, and error behavior. Make browser-facing and server-side calls consistent with that contract. Documentation for each framework does not by itself establish the application's API contract.
 
-Use the project's existing commands for the checks appropriate to the change. Check observable behavior and failure cases for meaningful logic changes. Avoid adding tooling or tests merely to restate a trivial implementation. Never claim a check passed if it was not run; report missing dependencies or unavailable services.
+Use the project's existing commands and active package manager for the checks appropriate to the change. For Yarn projects use their configured Yarn version and scripts (`yarn build`, `yarn test`, or the actual workspace commands); do not create an npm lockfile or switch managers for convenience. Check observable behavior and failure cases for meaningful logic changes. Avoid adding tooling or tests merely to restate a trivial implementation. Never claim a check passed if it was not run; report missing dependencies or unavailable services.
 
 For asynchronous mutations, persistent client state, subscriptions, or retry/recovery behavior, read [Asynchronous operation contracts](references/async-operations.md). Verify relevant ownership changes and response ordering across the client/server boundary; a server idempotency test alone does not prove the UI reuses the same logical operation.
 

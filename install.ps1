@@ -8,7 +8,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$taskVersion = '1.0.1'
+$taskVersion = '1.1.0'
 $taskRelease = "https://github.com/Jeromemoores/skills/releases/download/v$taskVersion"
 $taskSourceRoot = $null
 if ($PSScriptRoot -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'skills'))) {
@@ -44,6 +44,7 @@ if ($SkillSet -in @('All', 'Unreal')) { $taskSetFiles += 'unreal' }
 $taskNames = @($taskSetFiles | ForEach-Object {
     Get-Content -LiteralPath (Join-Path $taskSourceRoot "skill-sets\$_.txt")
 } | Where-Object { $_.Trim() } | Select-Object -Unique)
+$taskLocalFiles = @('library-location.json', 'unreal-location.json')
 $taskProfile = [IO.Path]::GetFullPath($UserRoot)
 $taskDestinations = @()
 if ($Target -in @('Both', 'Claude')) { $taskDestinations += Join-Path $taskProfile '.claude\skills' }
@@ -53,13 +54,42 @@ foreach ($taskName in $taskNames) {
     $taskSource = Join-Path $taskSourceRoot "skills\$taskName"
     if (-not (Test-Path -LiteralPath (Join-Path $taskSource 'SKILL.md'))) { throw "Missing skill: $taskName" }
     foreach ($taskRoot in $taskDestinations) {
-        $taskDestination = Join-Path $taskRoot $taskName
+        $taskExpectedRoot = [IO.Path]::GetFullPath($taskRoot).TrimEnd([IO.Path]::DirectorySeparatorChar)
+        $taskDestination = [IO.Path]::GetFullPath((Join-Path $taskExpectedRoot $taskName))
+        if ((Split-Path -Parent $taskDestination) -ne $taskExpectedRoot) { throw 'Skill destination escaped the selected skills directory.' }
+        # Refuse junction/symlink redirection before replacing a folder.
+        $taskAncestor = $taskDestination
+        while ($taskAncestor) {
+            if ((Test-Path -LiteralPath $taskAncestor) -and ((Get-Item -Force -LiteralPath $taskAncestor).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "Refusing linked installation path: $taskAncestor"
+            }
+            $taskAncestor = Split-Path -Parent $taskAncestor
+        }
+        # Replace the whole skill folder so files dropped by a release do not linger,
+        # but keep machine-local library preferences, which are never shipped.
+        $taskKept = @{}
+        if (Test-Path -LiteralPath $taskDestination) {
+            $taskOld = (Resolve-Path -LiteralPath $taskDestination).Path
+            if ($taskOld -ne $taskDestination) { throw 'Resolved installation target differs from the expected path.' }
+            if (Get-ChildItem -LiteralPath $taskOld -Force -Recurse | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint } | Select-Object -First 1) {
+                throw "Refusing to replace a skill containing linked files: $taskOld"
+            }
+            foreach ($taskFile in Get-ChildItem -LiteralPath $taskOld -File -Recurse | Where-Object { $_.Name -in $taskLocalFiles }) {
+                $taskKept[$taskFile.FullName.Substring($taskOld.Length + 1)] = [IO.File]::ReadAllBytes($taskFile.FullName)
+            }
+            Remove-Item -LiteralPath $taskDestination -Recurse -Force
+        }
         foreach ($taskFile in Get-ChildItem -LiteralPath $taskSource -File -Recurse) {
             if ($taskFile.FullName -match '[\\/]__pycache__[\\/]' -or $taskFile.Extension -in @('.pyc', '.pyo')) { continue }
             $taskRelative = $taskFile.FullName.Substring($taskSource.Length + 1)
             $taskOutput = Join-Path $taskDestination $taskRelative
             New-Item -ItemType Directory -Path (Split-Path -Parent $taskOutput) -Force | Out-Null
             Copy-Item -LiteralPath $taskFile.FullName -Destination $taskOutput -Force
+        }
+        foreach ($taskRelative in $taskKept.Keys) {
+            $taskOutput = Join-Path $taskDestination $taskRelative
+            New-Item -ItemType Directory -Path (Split-Path -Parent $taskOutput) -Force | Out-Null
+            [IO.File]::WriteAllBytes($taskOutput, $taskKept[$taskRelative])
         }
     }
 }

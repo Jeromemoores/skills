@@ -9,6 +9,8 @@ Keep the user's intent, scope, contracts, and completion criteria consistent acr
 
 ## Establish a shared plan
 
+Use `dependency-docs` when installed for the affected project's dependency/version inventory and relevant cached references. Include important coverage gaps in task packets. Give manifest/lockfile changes one owner and have that owner rerun documentation preparation before dependent API implementation; the planner need not download every unrelated manual for each worker.
+
 Inspect the project and existing task state before making a new plan. Reuse its established tracking system; for a portable local workflow, the coordinator owns concise plan/task/contract files. Do not create a competing board or impose a large planning ceremony on a small change.
 
 For an existing repository, onboard the affected system before task assignment: actual applications/modules and versions, current architecture/decisions, entry points and consumers, compatible reuse candidates, pending work, and relevant baseline checks/failures. Plan an incremental integration into that system. Include affected contracts and any required migration/rollout compatibility in the task packets; do not default to a new scaffold, stack upgrade, or wholesale rewrite. Keep discovery proportional to the request and use available stack-specific existing-project guidance.

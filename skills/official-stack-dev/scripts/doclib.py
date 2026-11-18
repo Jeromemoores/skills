@@ -20,7 +20,8 @@ import urllib.request
 import uuid
 
 HERE = Path(__file__).resolve().parent
-SOURCES = json.loads((HERE / "sources.json").read_text(encoding="utf-8"))
+# Optional so skills that only reuse the snapshot/index helpers need no web source list.
+SOURCES = json.loads((HERE / "sources.json").read_text(encoding="utf-8")) if (HERE / "sources.json").is_file() else {}
 DOC_EXTENSIONS = {".md", ".mdx", ".html", ".article", ".txt"}
 COPY_EXTENSIONS = DOC_EXTENSIONS | {".go", ".mod", ".sum", ".play", ".code", ".json", ".js", ".css"}
 
@@ -124,6 +125,8 @@ def resolve_ref(spec, override=None):
 def canonical(spec, repo_path, text=None):
     kind = spec["kind"]
     path = repo_path
+    if kind == "repository":
+        return f"https://github.com/{spec['repo']}/blob/{spec['ref']}/{repo_path}"
     if kind == "react":
         path = path.removeprefix("src/content/")
     elif kind == "react-legacy":
@@ -146,7 +149,7 @@ def canonical(spec, repo_path, text=None):
     return spec["site"].rstrip("/") + "/" + path
 
 
-def publish(root, source, spec, version, revision, files, notes=""):
+def publish(root, source, spec, version, revision, files, notes="", extra=None):
     snapshot_id = source + "-" + hashlib.sha256(revision.encode()).hexdigest()[:16]
     destination = root / "snapshots" / source / snapshot_id
     if (destination / "manifest.json").exists():
@@ -165,7 +168,8 @@ def publish(root, source, spec, version, revision, files, notes=""):
         raise RuntimeError(f"No documentation found for {source}@{version}; not activating it")
     manifest = {"schema": 1, "id": snapshot_id, "source": source, "stack": spec["stack"],
                 "version": version, "revision": revision, "downloaded_at": now(),
-                "repository": spec.get("repo", "installed Go toolchain"), "notes": notes, "files": entries}
+                "repository": spec.get("repo", "installed Go toolchain"), "notes": notes, **(extra or {}),
+                "files": entries}
     path = destination / "manifest.json"
     write_json(path, manifest)
     activate(root, path)
@@ -209,6 +213,9 @@ def sync_repo(root, source, spec, override=None, refresh=False):
                      and p.suffix.lower() in COPY_EXTENSIONS)
     paths.extend(p for p in checkout.iterdir() if p.is_file() and
                  (p.name.startswith("LICENSE") or p.name in {"PATENTS", "AUTHORS", "CONTRIBUTORS"}))
+    if spec.get("include_root_docs"):
+        paths.extend(p for p in checkout.iterdir() if p.is_file() and not p.is_symlink()
+                     and p.name.lower().startswith("readme") and p.suffix.lower() in DOC_EXTENSIONS)
     files = []
     for path in sorted(set(paths)):
         relative = path.relative_to(checkout).as_posix()
@@ -219,7 +226,15 @@ def sync_repo(root, source, spec, override=None, refresh=False):
     notes = "React documentation is maintained by major version, not exact minor/patch; verify API introductions separately." if spec["stack"] == "react" else ""
     if spec["kind"] == "mdn":
         notes = "MDN reference snapshot, not a browser-version guarantee. Raw Markdown macros do not include rendered compatibility tables; verify target browser/runtime support separately."
-    return publish(root, source, spec, ref, revision, files, notes), True
+    extra = {"dependency": spec["dependency"]} if "dependency" in spec else {}
+    if source == "react":
+        # Current-docs branch: record which major it described when fetched, so a
+        # later refresh across a major release cannot silently serve older projects.
+        try:
+            extra["docs_major"] = int(fetch_json("https://registry.npmjs.org/react/latest")["version"].split(".")[0])
+        except (OSError, ValueError, KeyError):
+            pass
+    return publish(root, source, spec, ref, revision, files, notes, extra), True
 
 
 def sync_stdlib(root, refresh=False):
@@ -410,21 +425,17 @@ def read_chunk(root, chunk_id, offset=0, max_chars=8000):
 
 
 def package_version(project, name):
-    # Installed packages and lockfiles, not dependency ranges, establish exact versions.
-    for parent in [project, *project.parents]:
-        package = parent / "node_modules" / name / "package.json"
-        if package.exists():
-            return load_json(package)["version"]
-        lockfile = parent / "package-lock.json"
-        if lockfile.exists():
-            data = load_json(lockfile)
-            package = data.get("packages", {}).get("node_modules/" + name, {})
-            if package.get("version"):
-                return package["version"]
-            package = data.get("dependencies", {}).get(name, {})
-            if package.get("version"):
-                return package["version"]
-    return None
+    from package_locks import resolve_dependency
+    project = project.resolve()
+    boundary = next((p for p in [project, *project.parents] if (p / '.git').exists()), project)
+    manifest = load_json(project / 'package.json', {})
+    deps = {**manifest.get('peerDependencies', {}), **manifest.get('devDependencies', {}),
+            **manifest.get('dependencies', {}), **manifest.get('optionalDependencies', {})}
+    requested = deps.get(name)
+    if not isinstance(requested, str):
+        return None
+    info = resolve_dependency(project, boundary, name, requested)
+    return info['version'] if info['status'] == 'resolved' else None
 
 
 def detect_web(project):
@@ -470,7 +481,7 @@ def detect(project):
                 if value:
                     result["versions"][name] = value
                 else:
-                    result["warnings"].append(f"Cannot resolve {name} from {deps[name]!r}. Install project dependencies or provide --{name}-version; pnpm/yarn lockfiles without installed packages require an explicit version.")
+                    result["warnings"].append(f"Cannot resolve {name} from {deps[name]!r}. Install project dependencies or provide --{name}-version; pnpm lockfiles without installed packages require an explicit version; resolve stale/ambiguous npm or Yarn locks first.")
             break
         if (parent / ".git").exists():
             break
@@ -523,10 +534,13 @@ def ensure(root, project, overrides, web=False):
     if web or "react" in info["versions"] or "next" in info["versions"]:
         info["web"] = {"javascript": True, "css": True, "browser": True}
     selected, errors, changed = [], [], False
-    def obtain(source, spec, ref=None):
+    def obtain(source, spec, ref=None, check=None):
         nonlocal changed
         path, new = sync_repo(root, source, spec, ref)
-        selected.append(load_json(path)["id"])
+        manifest = load_json(path)
+        if check:
+            check(manifest)
+        selected.append(manifest["id"])
         changed |= new
     versions = info["versions"]
     with lock(root):
@@ -542,7 +556,12 @@ def ensure(root, project, overrides, web=False):
                     source, spec = react_spec(versions["react"])
                     mappings[major] = {"source": source, "spec": spec}
                     write_json(mapping_file, mappings)
-                obtain(source, spec)
+                def same_major(manifest):
+                    docs_major = manifest.get("docs_major")
+                    if docs_major is not None and str(docs_major) != major:
+                        raise ValueError(f"Cached {source} docs describe React {docs_major}, but the project uses React {major}. "
+                                         "Run sync --source react --refresh for a newer major, or see https://react.dev/versions for older majors.")
+                obtain(source, spec, check=same_major)
                 info["warnings"].append("React docs cover a major version; verify minor/patch API availability separately.")
             except Exception as exc:
                 errors.append(str(exc))
@@ -575,7 +594,9 @@ def ensure(root, project, overrides, web=False):
                          load_json(root / "index-state.json", {}).get("active") != active(root)):
             # active flags may change even when all snapshots are cached.
             build_index(root)
-        info.update(snapshots=selected, errors=errors, root=str(root))
+        # Explicit inputs are recorded so update can reselect this project the same way.
+        info.update(snapshots=selected, errors=errors, root=str(root),
+                    overrides={key: value for key, value in overrides.items() if value}, web_requested=web)
         if not versions and not any(info["web"].values()) and not info["warnings"]:
             info["warnings"].append("No supported project detected. Use --web for a new website, sync for latest docs, or pass explicit framework versions.")
         key = hashlib.sha256(str(project.resolve()).encode()).hexdigest()[:20]
@@ -596,6 +617,84 @@ def verify(root):
         integrity = db.execute("PRAGMA integrity_check").fetchone()[0]
         sections = db.execute("SELECT count(*) FROM chunks").fetchone()[0]
     return {"files_checked": count, "sections": sections, "sqlite_integrity": integrity, "errors": errors}
+
+
+def leftovers(root):
+    """Temporary files and index builds a crashed writer can leave behind."""
+    temporary = re.compile(r"\.[0-9a-f]{32}\.tmp$")
+    folders = [root, root / "projects", *root.glob("snapshots/*/*"), *root.glob(".cache/epic/*")]
+    files = [p for folder in folders if folder.is_dir() for p in folder.iterdir() if p.is_file() and temporary.search(p.name)]
+    return files + sorted(root.glob("index-*.sqlite3*"))
+
+
+def prune(root, dry_run=False):
+    """Remove snapshots unused by the active selection or any existing recorded project. Caller holds the lock."""
+    keep, forgotten = set(active(root).values()), []
+    recorded = [*(root / "projects").glob("*.json"), *(root / "dependency-projects").glob("*.json")]
+    for path in sorted(recorded):
+        state = load_json(path, {})
+        if state.get("project") and not Path(state["project"]).exists():
+            forgotten.append(path)
+        else:
+            keep.update(state.get("snapshots", []))
+    unused = [p.parent for p in manifests(root) if load_json(p)["id"] not in keep]
+    unused += [d for d in (root / "snapshots").glob("*/*") if d.is_dir() and not (d / "manifest.json").exists()]
+    files = leftovers(root)
+    size = sum(f.stat().st_size for d in unused for f in d.rglob("*") if f.is_file()) + sum(f.stat().st_size for f in files)
+    result = {"dry_run": dry_run, "removed_snapshots": [d.name for d in unused],
+              "forgotten_projects": [load_json(p, {}).get("project") for p in forgotten],
+              "removed_files": [str(f) for f in files], "freed_bytes": size}
+    if not dry_run:
+        for directory in unused:
+            shutil.rmtree(directory)
+            if not any(directory.parent.iterdir()):
+                directory.parent.rmdir()
+        for file in [*forgotten, *files]:
+            file.unlink(missing_ok=True)
+        if unused:
+            build_index(root)
+    return result
+
+
+def update(root):
+    """Refresh branch-tracking docs in use, reselect every recorded project, then prune."""
+    result = {"root": str(root), "refreshed": [], "projects": [], "errors": []}
+    with lock(root):
+        for source, snapshot in active(root).items():
+            spec = SOURCES.get(source)
+            manifest = load_json(root / "snapshots" / source / snapshot / "manifest.json", {})
+            # Exact releases never change; only sources pinned to a branch (main/master) gain revisions.
+            if not spec or manifest.get("version") != spec["ref"]:
+                continue
+            try:
+                path, _ = sync_repo(root, source, spec, refresh=True)
+                if path.parent.name != snapshot:
+                    result["refreshed"].append(path.parent.name)
+            except Exception as exc:
+                result["errors"].append(f"{source}: {exc}")
+    for path in sorted((root / "projects").glob("*.json")):
+        state = load_json(path, {})
+        if not state.get("project") or not Path(state["project"]).is_dir():
+            continue
+        project = Path(state["project"])
+        try:
+            overrides = state.get("overrides")
+            if overrides is None:
+                # Recorded before explicit versions were saved: keep those detection cannot resolve.
+                detected = detect(project)["versions"]
+                overrides = {k: v for k, v in state.get("versions", {}).items() if k not in detected}
+            info = ensure(root, project, overrides, state.get("web_requested", state.get("web", {}).get("browser", False)))
+            result["projects"].append({"project": str(project), "snapshots": info["snapshots"]})
+            result["errors"].extend(f"{project}: {error}" for error in info["errors"])
+        except Exception as exc:
+            result["errors"].append(f"{project}: {exc}")
+    if result["errors"]:
+        result["pruned"] = None
+        result["warning"] = "Skipped pruning because an update step failed; no snapshots were removed."
+    else:
+        with lock(root):
+            result["pruned"] = prune(root)
+    return result
 
 
 def main(argv=None):
@@ -629,6 +728,9 @@ def main(argv=None):
     sub.add_parser("index")
     sub.add_parser("status")
     sub.add_parser("verify")
+    prn = sub.add_parser("prune", help="Delete snapshots unused by the active selection and existing recorded projects")
+    prn.add_argument("--dry-run", action="store_true", help="Report what would be removed without deleting")
+    sub.add_parser("update", help="Refresh branch-tracking docs, reselect recorded projects, then prune")
     args = parser.parse_args(argv)
     root = (args.root or default_root()).expanduser().resolve()
     if args.command == "detect":
@@ -673,6 +775,11 @@ def main(argv=None):
         result = read_chunk(root, args.id, args.offset, args.max_chars)
     elif args.command == "verify":
         result = verify(root)
+    elif args.command == "prune":
+        with lock(root):
+            result = prune(root, args.dry_run)
+    elif args.command == "update":
+        result = update(root)
     else:
         selected = active(root)
         result = {"root": str(root), "snapshots": []}
