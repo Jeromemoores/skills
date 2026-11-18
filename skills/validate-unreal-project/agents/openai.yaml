@@ -1,0 +1,3 @@
+interface:
+  display_name: "Validate Unreal Project"
+  short_description: "Verify Unreal builds, runtime behavior, packages, and profiles"

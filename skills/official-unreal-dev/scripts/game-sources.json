@@ -1,0 +1,101 @@
+{
+  "cpp-msvc": {
+    "stack": "cpp",
+    "repo": "MicrosoftDocs/cpp-docs",
+    "ref": "main",
+    "paths": [
+      "docs/cpp",
+      "docs/standard-library",
+      "docs/preprocessor",
+      "docs/build/reference"
+    ],
+    "site": "https://learn.microsoft.com/en-us/cpp",
+    "kind": "generic",
+    "strip_prefix": "docs/"
+  },
+  "cpp-core-guidelines": {
+    "stack": "cpp",
+    "repo": "isocpp/CppCoreGuidelines",
+    "ref": "master",
+    "file": "CppCoreGuidelines.md",
+    "site": "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"
+  },
+  "epic_topics": {
+    "core": [
+      "programming-with-cplusplus-in-unreal-engine",
+      "epic-cplusplus-coding-standard-for-unreal-engine",
+      "gameplay-framework-in-unreal-engine",
+      "objects-in-unreal-engine",
+      "unreal-object-handling-in-unreal-engine",
+      "object-pointers-in-unreal-engine",
+      "unreal-engine-actor-lifecycle",
+      "components-in-unreal-engine",
+      "gameplay-timers-in-unreal-engine",
+      "programming-subsystems-in-unreal-engine",
+      "delegates-and-lambda-functions-in-unreal-engine",
+      "unreal-engine-uproperties",
+      "ufunctions-in-unreal-engine"
+    ],
+    "build": [
+      "unreal-engine-modules",
+      "unreal-build-tool-in-unreal-engine",
+      "unreal-header-tool-for-unreal-engine",
+      "build-configurations-reference-for-unreal-engine",
+      "using-live-coding-to-recompile-unreal-engine-applications-at-runtime",
+      "packaging-your-project"
+    ],
+    "input-ui": [
+      "enhanced-input-in-unreal-engine",
+      "umg-ui-designer-quick-start-guide-in-unreal-engine"
+    ],
+    "networking": [
+      "networking-and-multiplayer-in-unreal-engine",
+      "detailed-actor-replication-flow-in-unreal-engine",
+      "remote-procedure-calls-in-unreal-engine",
+      "replicating-actor-components-in-unreal-engine"
+    ],
+    "performance": [
+      "unreal-insights-in-unreal-engine",
+      "stat-commands-in-unreal-engine",
+      "introduction-to-performance-profiling-and-configuration-in-unreal-engine"
+    ],
+    "testing": [
+      "automation-test-framework-in-unreal-engine",
+      "automation-spec-in-unreal-engine",
+      "functional-testing-in-unreal-engine"
+    ],
+    "assets": [
+      "asset-registry-in-unreal-engine",
+      "asset-management-in-unreal-engine",
+      "asset-redirectors-in-unreal-engine"
+    ],
+    "api": [
+      "API/Runtime/Engine/FTimerManager",
+      "API/Runtime/CoreUObject/UObject",
+      "API/Runtime/Engine/AActor",
+      "API/Runtime/Engine/UActorComponent"
+    ]
+  },
+  "engine_headers": [
+    "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h",
+    "Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h",
+    "Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h",
+    "Engine/Source/Runtime/CoreUObject/Public/UObject/WeakObjectPtr.h",
+    "Engine/Source/Runtime/CoreUObject/Public/UObject/ScriptInterface.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/Pawn.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/GameStateBase.h",
+    "Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerState.h",
+    "Engine/Source/Runtime/Engine/Classes/Components/ActorComponent.h",
+    "Engine/Source/Runtime/Engine/Classes/Components/SceneComponent.h",
+    "Engine/Source/Runtime/Engine/Classes/Engine/GameInstance.h",
+    "Engine/Source/Runtime/Engine/Public/TimerManager.h",
+    "Engine/Source/Runtime/Engine/Public/Subsystems/Subsystem.h",
+    "Engine/Source/Runtime/Engine/Public/Subsystems/GameInstanceSubsystem.h",
+    "Engine/Source/Runtime/Core/Public/Templates/SharedPointer.h",
+    "Engine/Source/Runtime/Core/Public/Templates/UniquePtr.h"
+  ]
+}

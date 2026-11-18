@@ -1,0 +1,28 @@
+---
+name: implement-task
+description: "Implement a bounded software task from a coordinator's packet or a clear user brief, respecting file ownership, documented APIs, shared contracts, and acceptance checks. Use for focused implementation work, including economical-model builders; exclude project-wide orchestration and independent review signoff."
+---
+
+# Implement Task
+
+Complete the assigned outcome with a focused, reviewable change. The task packet and original requirements establish the scope; a smaller model or context window is a reason for a clearer assignment, not weaker correctness criteria.
+
+Read the applicable project instructions, task/contract revision, relevant existing code, and acceptance checks. Verify claimed dependencies are actually available. If the packet is incomplete, infer routine details from the project and ask the coordinator about a material unresolved interface/behavior decision. Continue independent work where possible; do not invent a shared API or silently expand the task.
+
+In an existing repo, identify the affected package/module, integration points, current versions/conventions, relevant tests, and pre-existing working changes. Establish a targeted baseline before consequential edits when feasible; keep existing failures and missing environment access distinct from regressions. Extend compatible implementations instead of re-scaffolding or introducing a parallel subsystem. Preserve unrelated work and public/persisted contracts; upgrades, broad cleanup, and breaking migrations require actual task scope. Use the relevant stack's existing-project guidance when available.
+
+Use version-appropriate maintainer documentation for consequential APIs and patterns. For React/Next.js/Go/CSS/JavaScript, use `official-stack-dev` if installed; for Unreal Engine use `official-unreal-dev` when available, including its local references and engine-specific constraints. Otherwise consult appropriate maintainer references directly. Read relevant semantics, constraints, lifecycle/error behavior, and support notes rather than copying a familiar snippet. References already read in the current task can be reused.
+
+Work within assigned files or the established single-writer arrangement. Read shared contracts freely, but request reassignment before editing files another agent owns. Report a necessary shared-contract, dependency, migration, or configuration change to the coordinator before concurrent implementations diverge. Do not reset or overwrite unrelated changes. If no team is running, preserve the same scope discipline without inventing approvals for routine edits.
+
+Implement the simplest approach that meets the actual requirement and existing conventions. Preserve error handling, ownership, data invariants, and compatibility relevant to the change. Important concurrency, authorization, or storage guarantees must come from an appropriate mechanism; an in-process shortcut does not establish correctness across multiple service instances. Escalate an unresolved high-impact design question rather than disguising it behind a TODO or placeholder success response.
+
+For a consequential documented contract, identify the implementing mechanism and an observable check that could falsify the guarantee. For asynchronous/shared mutable state, identify the operation identity, owner/lifetime, notification path, and cleanup authority. Check that an older completion cannot replace or clear newer work, and that supported retries retain the same logical operation across owner replacement or recovery. Apply relevant web/engine lifecycle guidance; do not mistake cancellation of a local wait for rollback of a remote effect. Include these invariants and actual verification in the handoff where relevant.
+
+Before adding a production helper, search for existing behavior by domain operation and types as well as names; use `audit-code-reuse` if available for a substantial question. Reuse compatible logic or explain why the nearest candidate does not fit. Give functions one coherent responsibility, keep calculation/query logic separate from unrelated mutation/presentation, and make intentional orchestration clear. Preserve atomic operations when separating functions. Document public/non-obvious contracts and important reasons/constraints using the language's conventions; avoid comments that merely restate obvious code.
+
+Run the existing targeted checks appropriate to the task. Add a behavioral regression test when a meaningful defect or requirement needs it; avoid tests that merely restate a trivial implementation. Check relevant failure paths and document any environment limitation. Do not delete assertions, skip failing tests, weaken types, swallow errors, or introduce fake/stubbed behavior merely to make checks pass. A deliberate product-approved stub must be identified as such.
+
+Return a concise handoff: task ID, changed files and behavior, relevant docs actually read, exact checks executed and outcomes, known failures/limitations, and interface or integration concerns. Distinguish completed code from untested claims. In a team workflow, hand the task back as ready for review; do not claim independent review or update another role's acceptance record. Respond to concrete findings and keep any repair within assigned ownership.
+
+If repeated attempts are not resolving the same issue, provide the reproduction and evidence to the coordinator instead of producing an endless sequence of speculative rewrites. Do not switch models, expand budgets, or spawn additional agents unless the user's workflow and runner authorize it.

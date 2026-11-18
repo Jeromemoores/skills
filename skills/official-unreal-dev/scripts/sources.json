@@ -1,0 +1,9 @@
+{
+  "react": {"stack": "react", "repo": "reactjs/react.dev", "ref": "main", "paths": ["src/content"], "site": "https://react.dev", "kind": "react"},
+  "nextjs": {"stack": "nextjs", "repo": "vercel/next.js", "ref": "npm:next", "paths": ["docs"], "site": "https://nextjs.org/docs", "kind": "nextjs"},
+  "go-guides": {"stack": "go", "repo": "golang/website", "ref": "master", "paths": ["_content/doc", "_content/ref"], "site": "https://go.dev", "kind": "go-guides"},
+  "go-language": {"stack": "go", "repo": "golang/go", "ref": "go:stable", "paths": ["doc"], "site": "https://go.dev", "kind": "go-language"},
+  "css": {"stack": "css", "repo": "mdn/content", "ref": "main", "paths": ["files/en-us/web/css"], "site": "https://developer.mozilla.org/en-US/docs", "kind": "mdn"},
+  "javascript": {"stack": "javascript", "repo": "mdn/content", "ref": "main", "paths": ["files/en-us/web/javascript"], "site": "https://developer.mozilla.org/en-US/docs", "kind": "mdn"},
+  "web-apis": {"stack": "javascript", "repo": "mdn/content", "ref": "main", "paths": ["files/en-us/web/api/document", "files/en-us/web/api/element", "files/en-us/web/api/node", "files/en-us/web/api/event", "files/en-us/web/api/eventtarget", "files/en-us/web/api/window", "files/en-us/web/api/fetch_api", "files/en-us/web/api/request", "files/en-us/web/api/response", "files/en-us/web/api/headers", "files/en-us/web/api/abortcontroller", "files/en-us/web/api/abortsignal", "files/en-us/web/api/url", "files/en-us/web/api/urlsearchparams", "files/en-us/web/api/formdata", "files/en-us/web/api/storage", "files/en-us/web/api/web_storage_api", "files/en-us/web/api/history", "files/en-us/web/api/location", "files/en-us/web/api/console", "files/en-us/web/api/domtokenlist", "files/en-us/web/api/nodelist", "files/en-us/web/api/htmlcollection"], "site": "https://developer.mozilla.org/en-US/docs", "kind": "mdn"}
+}

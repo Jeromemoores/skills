@@ -1,0 +1,3 @@
+interface:
+  display_name: "Validate Web Capacity"
+  short_description: "Measure web capacity with representative performance tests"

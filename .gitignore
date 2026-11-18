@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+dist/
+.cache/
+snapshots/
+*.sqlite3*
+.writer.lock
+.env
+.env.*
+library-location.json
+unreal-location.json
+test-results.txt

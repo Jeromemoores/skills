@@ -1,0 +1,3 @@
+interface:
+  display_name: "Plan Web Capacity"
+  short_description: "Assess workload, architecture, bottlenecks, and growth"

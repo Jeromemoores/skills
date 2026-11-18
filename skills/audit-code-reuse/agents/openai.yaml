@@ -1,0 +1,3 @@
+interface:
+  display_name: "Audit Code Reuse"
+  short_description: "Find reusable logic, duplicates, and unused-code candidates"
