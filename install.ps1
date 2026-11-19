@@ -8,7 +8,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$taskVersion = '1.2.1'
+$taskVersion = '1.3.0'
 $taskRelease = "https://github.com/Jeromemoores/skills/releases/download/v$taskVersion"
 $taskSourceRoot = $null
 if ($PSScriptRoot -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'skills'))) {

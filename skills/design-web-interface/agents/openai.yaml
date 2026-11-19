@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Web Interfaces"
+  short_description: "Task-focused UI/UX and intentional visual design"
+  default_prompt: "Use $design-web-interface to design this web interface around its users, content, brand and important interactions."

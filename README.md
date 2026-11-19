@@ -4,7 +4,7 @@ Web development and Unreal Engine skill sets for Claude Code and Codex. They sup
 
 ## Install with one command
 
-**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the 11 skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
+**Windows offline option:** download the **Web-only ZIP** from [Releases](https://github.com/Jeromemoores/skills/releases/latest), extract it, and double-click **`install.cmd`**. It copies the 13 skills to both agents using standard Windows file-copy tools. No PowerShell or network access is needed for this installation step. First-time documentation downloads still need network access, Python and Git.
 
 **Web only — Windows PowerShell (recommended for the work laptop):**
 
@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install-un
 curl -fsSL https://raw.githubusercontent.com/Jeromemoores/skills/main/install.sh | sh
 ```
 
-Web-only installs 11 skills; Unreal-only installs 10. Both include the four shared roles, dependency documentation, security review and safe-migration planning. The combined option installs all 14 unique skills. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Each installed skill folder is replaced, so files removed by a newer release do not linger; machine-local `library-location.json`/`unreal-location.json` preferences and unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
+Web-only installs 13 skills; Unreal-only installs 10. Both include the four shared roles, dependency documentation, security review and safe-migration planning. The combined option installs all 16 unique skills. Each option installs for both agents into your user profile: `~/.claude/skills/` and `~/.agents/skills/`. Each downloads only its selected versioned bundle and verifies its SHA-256 checksum. Each installed skill folder is replaced, so files removed by a newer release do not linger; machine-local `library-location.json`/`unreal-location.json` preferences and unrelated skills are preserved. Selecting Web-only leaves any previously installed Unreal skills alone. Run the same command to install a newer release. Start a new agent session if updated skills do not appear.
 
 The commands execute this repository's installer. You can inspect/download it first or use a local release archive instead. Windows needs PowerShell 5.1+; macOS/Linux needs `sh`, `curl`, `unzip`, and `sha256sum` or `shasum`.
 
@@ -64,6 +64,8 @@ Each set includes the four shared roles, `dependency-docs`, `review-security` an
 | Web | `plan-web-capacity` | Workload, architecture, bottlenecks and growth planning |
 | Web | `validate-web-capacity` | Representative, bounded performance measurements |
 | Web | `review-accessibility` | W3C-based keyboard, focus, form, visual and assistive-technology review |
+| Web | `design-web-interface` | Task flows, content hierarchy, visual direction and responsive UI implementation |
+| Web | `review-web-design` | Rendered UI/UX critique, state review and contextual de-slop checks |
 | Unreal | `official-unreal-dev` | Epic/C++ docs and matching installed engine headers |
 | Unreal | `plan-unreal-project` | Gameplay architecture, ownership and target budgets |
 | Unreal | `validate-unreal-project` | Real build/runtime, automation, packaging and profiling evidence |
@@ -121,6 +123,12 @@ Use `plan-safe-migrations` before consequential schema, persisted API/data, game
 The existing reviewer and Web/Unreal validation skills now include regression-test design: independent oracles, representative fixtures, deterministic ordering, correct runtime boundaries and a source/build snapshot. Skills route relevant work without imposing unrelated audits on ordinary edits. See [validation evidence](VALIDATION.md) for packaging checks and the independent source-only scenario evaluation.
 
 ## Review and validation approach
+
+v1.3.0 adds two Web-only design skills. Use `design-web-interface` for a new or reshaped page/flow; it establishes the user task and content, preserves relevant existing brand/components, chooses a coherent visual direction and inspects the rendered result. Use `review-web-design` for visual/UX critique or a de-slop pass, separating reproducible barriers, unsupported claims and optional taste changes. Familiar fonts, palettes, cards and dense tables are evaluated in context rather than banned.
+
+The skills include focused references for tasks/recovery states, visual composition and rendered critique. They reuse the existing stack, accessibility and code-review specialists. A browser walkthrough is not a user study, and an attractive screenshot does not establish working interactions. See [validation evidence](VALIDATION.md) for the actual evaluation and its limits.
+
+Phone/tablet/desktop guidance covers content-driven breakpoints, portrait/landscape layouts, touch and keyboard/mouse use, hover-free actions, constrained-height forms, meaningful table scrolling, zoom, safe areas and overlay behavior. Checks report the actual browser/input conditions; emulation is kept distinct from physical devices and on-screen keyboards. Planner, implementer, stack-development and code-review skills explicitly reference the design skills for relevant work when installed.
 
 Agents connect consequential documentation contracts to implementation mechanisms and failure-case checks. Review includes ownership, asynchronous ordering and retry recovery, plus concrete recommendations for cohesion, reuse and efficiency. Optimizations distinguish measured evidence from hypotheses. Existing repos retain their architecture, compatible APIs/assets/data and pending work; baseline failures remain separate from regressions.
 

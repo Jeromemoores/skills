@@ -1,4 +1,30 @@
-# v1.2.1 validation
+# v1.3.0 validation
+
+## Scope and package checks
+
+Adds `design-web-interface` and `review-web-design` to the Web bundle, with original instructions and focused references for task flows/states, visual direction, phone/tablet/desktop input/layout, and rendered critique/de-slop. Planner, implementer, official-stack development and code-review skills route relevant work to them when installed. No third-party skill runtime, hook, design catalog or new package dependency is imported. The Unreal-only set retains 10 skills; Web has 13; combined has 16 unique skills.
+
+`python tests/run_tests.py`: **96 tests passed in 104.428 seconds** on Windows. Two added checks verify that design skills ship with Web/combined only, every source skill is distributed, and local Markdown references resolve inside each archive. All 16 skill entrypoints passed the skill-creator validator; local references were also checked against source. Existing helper/installer checks cover the local/bootstrap/offline paths, checksum verification, preferences and unrelated-skill preservation. These checks do not test subjective design quality.
+
+Installed all 16 skills for both local Claude and Codex profiles and verified 138 installed files against source. Machine-local documentation preferences were preserved. The four planner/implementer/stack/code-review entrypoints include the relevant design-skill references in both installations. Final archives were checked against shipped skill source; documentation caches, machine settings and benchmark artifacts remain excluded.
+
+## Independent design forward-test
+
+Four fresh builder contexts received equivalent supplied inputs for two isolated local briefs: a fictional bicycle-repair site and an existing-brand dispatch dashboard. Each brief was built using the existing skills and again with the new design skill added. All used the same inherited model configuration (exact model ID not exposed), native HTML/CSS/JavaScript, supplied facts/data, local/system fonts, no external assets/packages, and one bounded self-review/revision allowance. Tool use and actual effort varied; this was not a timed performance or cost experiment.
+
+A separate reviewer context used the new review skill with anonymized A/B source/screenshots and the briefs. It was not given variant labels, the parent's conclusions, expected defects or builder handoffs. The reviewer inspected renders and independently operated the important tasks. It preferred the guided marketing page for service/form grouping, readable content and narrow navigation, and the guided dashboard more modestly for comparison density, delayed-job hierarchy and recovery focus. These are evidence-based heuristic judgments from one pair per brief, not real-user preference, conversion evidence, a statistical improvement estimate or proof across models.
+
+The review found corrupted punctuation/hour ranges in the marketing baseline, and keyboard Retry focus loss plus a missing tablet scroll cue in the dashboard baseline. First-evaluation snapshots/reports were retained. A narrow correction round in the disposable prototypes followed; original application repositories were not edited. The encoding finding informed an explicit instruction to verify decoded source and visible text rather than mistaking terminal decoding for source corruption. Mobile/tablet/desktop coverage was expanded at the user's request; the full paired build experiment was not repeated after these small guidance refinements.
+
+## Browser evidence and limits
+
+The parent rerendered all four anonymized prototypes with a common Playwright/Chromium harness. Four default runs checked 1280/768/390/320px layouts and meaningful tasks: invalid/corrected local form submission, complete 16-record fidelity, combined search/status filters, no-results recovery, retained-data failure and Retry. Sixteen additional runs exercised phone-touch 390×844, tablet portrait 768×1024, tablet landscape 1024×768, and wide desktop 1440×900. All 20 common runs passed their scoped functional checks with no whole-page overflow, page errors or attempted external requests. These automated checks did not detect every visual or focus issue; the independent review's findings remain distinct evidence.
+
+The reviewer additionally tested keyboard focus after recovery, contained table scrolling, content retention, tablet touch taps, orientation/resizing and constrained-height views. Both dashboard variants retained the specified purple primary identity, Inter/system fallback declaration, semantic table and supplied records. A narrow screenshot or a coarse-pointer emulation does not reproduce a physical phone/tablet, Safari/Android, native picker, soft keyboard, safe area, assistive technology or full zoom matrix. None of those untested conditions is claimed as validated. No performance/user-count or whole-site accessibility certification follows.
+
+The local research/evaluation artifacts are outside the release tree at `E:/coding/design-skill-research/benchmark-2026-11-19`, including input fingerprints, first-evaluation source/skill hashes, anonymized snapshots, independent reports, source mapping and browser results. They contain fictional prototype data, are not shipped in the ZIPs and are not prerequisites for using the skills. This section records the actual method/results without embedding project-specific repair instructions in a skill.
+
+## Historical v1.2.1 evidence
 
 ## v1.2.1 scope and current evidence
 

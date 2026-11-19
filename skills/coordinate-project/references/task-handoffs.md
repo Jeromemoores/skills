@@ -11,6 +11,7 @@ Allowed files / shared files assigned to this task:
 Behavior and invariants to preserve:
 Critical contract -> implementing owner/mechanism -> failure-case acceptance evidence:
 Existing implementation/reuse candidates and relevant code-documentation contracts:
+Affected UI task/flow, approved content/brand/tokens and rendered design checks when relevant:
 Acceptance checks / relevant known baseline failures:
 Non-goals / decisions that must return to the coordinator:
 Baseline: commit/worktree, or a precise file/change snapshot

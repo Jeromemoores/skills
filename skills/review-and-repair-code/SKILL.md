@@ -11,6 +11,8 @@ Inspect the implementation and its observable behavior rather than trusting a bu
 
 Use `review-security` for a requested security assessment or a focused consequential trust-boundary question; use `review-accessibility` for affected web accessibility journeys. Use `plan-safe-migrations` before a consequential persisted/schema/reflected-format transition when installed. These companions specialize relevant work; they do not require unrelated audits or authorize repairs during a review-only assignment.
 
+Use `review-web-design` when installed for a requested visual/UX critique or de-slop pass, including actual rendered hierarchy and task behavior. Keep its contextual design recommendations separate from code defects and measured performance. A code-only review cannot establish visual quality from a passing build.
+
 For affected third-party APIs or dependency changes, use `dependency-docs` when installed to check the actual resolved versions, changed inventory and reference coverage. Prepare missing relevant docs and verify consequential contracts against matching maintainer sources. Separate missing documentation from demonstrated code defects; unrelated undocumented dependencies do not by themselves block the review. Do not infer exact patch behavior from a same-major snapshot or complete API coverage from a publisher README.
 
 Read the original requirements, applicable project instructions, shared contracts, relevant acceptance checks, and the actual diff/change snapshot. Identify the baseline and relevant configuration/dependency versions. If other agents are writing concurrently, coordinate a stable snapshot or single-writer handoff before evaluating or repairing affected files. Preserve unrelated user/agent work.

@@ -1,6 +1,8 @@
 """Exercise real local and download/bootstrap installers in disposable profiles."""
 from pathlib import Path
 import os
+import posixpath
+import re
 import shutil
 import subprocess
 import tempfile
@@ -296,6 +298,34 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
         self.assertEqual({p.name for p in self.assets.iterdir()}, {
             f"skills-v{version}.zip", f"web-skills-v{version}.zip",
             f"unreal-skills-v{version}.zip", "SHA256SUMS"})
+
+    def test_new_design_skills_ship_only_with_web_and_all_skills_are_distributed(self):
+        version = (ROOT / "VERSION").read_text().strip()
+        design = {"design-web-interface", "review-web-design"}
+        actual = {}
+        for selected in ["all", "web", "unreal"]:
+            bundle = "skills" if selected == "all" else selected + "-skills"
+            with zipfile.ZipFile(self.assets / f"{bundle}-v{version}.zip") as z:
+                actual[selected] = {n.split('/')[2] for n in z.namelist() if n.endswith('/SKILL.md')}
+        self.assertTrue(design <= actual["web"])
+        self.assertTrue(design.isdisjoint(actual["unreal"]))
+        self.assertEqual(actual["all"], {p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file()})
+
+    def test_packaged_skill_local_reference_links_resolve_inside_each_bundle(self):
+        version = (ROOT / "VERSION").read_text().strip()
+        for bundle in ["skills", "web-skills", "unreal-skills"]:
+            with zipfile.ZipFile(self.assets / f"{bundle}-v{version}.zip") as z:
+                names = set(z.namelist())
+                for name in names:
+                    if '/skills/' not in name or not name.endswith('.md'):
+                        continue
+                    for link in re.findall(r'\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)', z.read(name).decode('utf-8')):
+                        if '://' in link or link.startswith(('#', 'mailto:')):
+                            continue
+                        relative = link.split('#')[0]
+                        if relative:
+                            target = posixpath.normpath(posixpath.join(posixpath.dirname(name), relative))
+                            self.assertIn(target, names, f'{name}: {link}')
 
     @unittest.skipUnless(os.name == "nt", "Windows Command Prompt is unavailable")
     def test_extracted_web_zip_installs_without_powershell(self):

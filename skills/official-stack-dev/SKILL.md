@@ -36,6 +36,8 @@ For an existing repository, read [Existing repositories](references/existing-rep
 
 ## Assess architecture before consequential builds
 
+For new or substantially reshaped website UI/UX, use `design-web-interface` when installed to establish task flow, content hierarchy and intentional visual direction. Use `review-web-design` for requested rendered design critique or de-slop work. Preserve existing brand/components and keep visual judgments distinct from accessibility, functional and capacity evidence; routine code edits do not require a redesign.
+
 For a new application, substantial data-flow/deployment change, or explicit scalability question, present a concise workload and architecture assessment before implementing the affected architecture. Establish peak requests/actions, data growth, expensive operations, latency/error objectives, relevant cost/team constraints, and likely bottlenecks. Distinguish documented limits, assumptions, and measurements; a framework name and a total user count do not establish capacity. Explain what to build now, what to defer, and observable triggers for revisiting the design. Reuse existing assessments for small changes.
 
 If `plan-web-capacity` is installed, use it for this assessment; otherwise apply the criteria above using the relevant maintainer docs. If capacity testing is requested and `validate-web-capacity` is available, use it to guide representative measurement. These skills are optional companions: do not promise a user ceiling without workload-specific evidence or impose a new approval gate on ordinary authorized implementation.

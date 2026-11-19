@@ -2,3 +2,5 @@ official-stack-dev
 plan-web-capacity
 validate-web-capacity
 review-accessibility
+design-web-interface
+review-web-design

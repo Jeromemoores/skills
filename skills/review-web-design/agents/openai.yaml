@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Web Design"
+  short_description: "Rendered UI/UX critique and contextual de-slop checks"
+  default_prompt: "Use $review-web-design to inspect this interface's rendered design and important tasks, preserving its brief and brand."
