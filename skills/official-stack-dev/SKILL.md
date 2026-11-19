@@ -7,7 +7,28 @@ description: "Build, extend, debug, review, or explain new and existing React, N
 
 Ground framework and language decisions in the maintainers' documentation, then verify the implementation in the actual project. This skill guides research and implementation; it does not change the model's training or guarantee correctness.
 
-For a requested team or mixed-model workflow, use `coordinate-project` when available to manage the plan, shared contracts, builder tasks, and review. `implement-task` and `review-and-repair-code` provide optional role guidance. These companions do not replace documentation research, change permissions, or select models by themselves; ordinary solo tasks can use this skill directly.
+## Workflow
+
+1. Read the project instructions and the code involved; establish actual versions and conventions.
+2. Run the local documentation helper and read the sections that govern the change.
+3. Implement with documented primitives, following the project's existing organization.
+4. Check observable behavior and failure cases with the project's own commands.
+5. Report what changed, what was verified and the sources actually consulted.
+
+## Companion skills
+
+Use these when installed and the change calls for them; otherwise apply the same criteria with the relevant maintainer docs. They are optional: ordinary solo tasks use this skill directly, and none of them replaces documentation research, adds an approval gate, or requires unrelated audits.
+
+- `coordinate-project`, `implement-task`, `review-and-repair-code`: a requested team or mixed-model workflow.
+- `dependency-docs`: documentation for additional third-party dependencies.
+- `design-web-interface`: task flow, content hierarchy and visual direction for new or substantially reshaped UI/UX.
+- `review-web-design`: requested rendered design critique or de-slop work.
+- `plan-web-capacity`: workload and architecture assessment.
+- `validate-web-capacity`: representative measurement when capacity testing is requested.
+- `review-security`: consequential trust boundaries.
+- `review-accessibility`: accessibility journeys.
+- `plan-safe-migrations`: database or persisted API/data compatibility changes.
+- `audit-code-reuse`: substantial duplication or unused-code questions.
 
 ## Documentation is the default authority
 
@@ -36,20 +57,27 @@ For an existing repository, read [Existing repositories](references/existing-rep
 
 ## Assess architecture before consequential builds
 
-For new or substantially reshaped website UI/UX, use `design-web-interface` when installed to establish task flow, content hierarchy and intentional visual direction. Use `review-web-design` for requested rendered design critique or de-slop work. Preserve existing brand/components and keep visual judgments distinct from accessibility, functional and capacity evidence; routine code edits do not require a redesign.
+For new or substantially reshaped website UI/UX, establish task flow, content hierarchy and intentional visual direction first. Preserve existing brand/components and keep visual judgments distinct from accessibility, functional and capacity evidence; routine code edits do not require a redesign.
 
 For a new application, substantial data-flow/deployment change, or explicit scalability question, present a concise workload and architecture assessment before implementing the affected architecture. Establish peak requests/actions, data growth, expensive operations, latency/error objectives, relevant cost/team constraints, and likely bottlenecks. Distinguish documented limits, assumptions, and measurements; a framework name and a total user count do not establish capacity. Explain what to build now, what to defer, and observable triggers for revisiting the design. Reuse existing assessments for small changes.
 
-If `plan-web-capacity` is installed, use it for this assessment; otherwise apply the criteria above using the relevant maintainer docs. If capacity testing is requested and `validate-web-capacity` is available, use it to guide representative measurement. These skills are optional companions: do not promise a user ceiling without workload-specific evidence or impose a new approval gate on ordinary authorized implementation.
+Do not promise a user ceiling without workload-specific evidence.
 
 ## Consult the right documentation
 
-Before choosing or changing behavior that depends on a framework or language API, use the bundled local documentation helper. Read [Local documentation](references/local-docs.md) for commands and portable cache behavior. Resolve the helper path relative to this skill folder, not the current project directory.
+Before choosing or changing behavior that depends on a framework or language API, use the bundled local documentation helper. Read [Local documentation](references/local-docs.md) for commands and portable cache behavior. Resolve `SKILL_DIR` from this skill's folder, not the current project directory.
 
-1. Run `python "<skill-folder>/scripts/doclib.py" ensure --project "<relevant-project-directory>"`. This automatically downloads missing official docs and records the project's snapshot selection in the library, outside the project. Reuse cached snapshots on later calls. Run it at the relevant application directory in a monorepo.
-2. For a plain or new website, add `--web` to `ensure` so CSS, JavaScript, and common browser API docs are available even before files exist. Existing React/Next.js and plain web projects are detected automatically. Search with `search "<focused API or topic>" --stack react|nextjs|go|css|javascript --project "<same-directory>"` and read useful section IDs with `read ID`. Prefer the project's bundled Next.js docs when available. Search results alone do not establish the full API contract.
-3. Respect reported resolution errors. For unresolved package ranges, establish the actual version before passing an explicit override. React docs match major versions rather than individual minor/patch releases; Go website guides are revision snapshots. Verify finer-grained API availability when needed.
-4. Use the web for missing material, unresolved version details, or requested freshness checks. Do not refresh all sources before every task or load the full documentation corpus into context. For a new project whose versions are undecided, `sync` can cache current stable docs.
+```text
+python "SKILL_DIR/scripts/doclib.py" ensure --project "PROJECT_DIR"
+python "SKILL_DIR/scripts/doclib.py" search "FOCUSED API OR TOPIC" --stack react --project "PROJECT_DIR"
+python "SKILL_DIR/scripts/doclib.py" read SECTION_ID
+```
+
+1. Run `ensure` at the relevant application directory (the affected app in a monorepo). It downloads missing official docs and records the project's snapshot selection in the library, outside the project. Later calls reuse cached snapshots.
+2. For a plain or new website, add `--web` to `ensure` so CSS, JavaScript and common browser API docs are available even before files exist. Existing React/Next.js and plain web projects are detected automatically.
+3. Search with `--stack react|nextjs|go|css|javascript` and the same `--project`, then read useful section IDs. Search results alone do not establish the full API contract. Prefer the project's bundled Next.js docs when available.
+4. Respect reported resolution errors. For unresolved package ranges, establish the actual version before passing an explicit override. React docs match major versions rather than individual minor/patch releases; Go website guides are revision snapshots. Verify finer-grained API availability when needed.
+5. Use the web for missing material, unresolved version details, or requested freshness checks. Do not refresh all sources before every task or load the full documentation corpus into context. For a new project whose versions are undecided, `sync` can cache current stable docs.
 
 Read only the stack references needed for the task:
 
@@ -60,7 +88,7 @@ Read only the stack references needed for the task:
 
 The helper requires Python 3.11+ and Git for first-time repository downloads, and no API key, MCP server, or paid service. If a prerequisite is missing, report it and use available official documentation tools. When searching the web, search within the official domain and open the actual result; a search snippet or an unopened URL is not verification. Use first-party migration guides, release notes, and tagged source/tests when the main docs do not resolve a version-specific detail.
 
-For additional dependencies, use `dependency-docs` when installed: run its `ensure --project PROJECT_DIR` during onboarding and after manifest/lockfile changes, then search/read the relevant package sections before implementing consequential APIs. It supports npm and Yarn Classic/modern (including PnP) without installing packages. Reuse identifiable same-major snapshots while checking minor/patch availability; use `--exact` when needed. Inspect coverage: a publisher README is a limited reference, and private/local/unresolved dependencies need appropriate project or maintainer sources. Otherwise consult those sources directly. Hosting on GitHub or pkg.go.dev alone does not establish maintainer identity.
+For additional dependencies, run the `dependency-docs` `ensure --project PROJECT_DIR` during onboarding and after manifest/lockfile changes, then search/read the relevant package sections before implementing consequential APIs. It supports npm and Yarn Classic/modern (including PnP) without installing packages. Reuse identifiable same-major snapshots while checking minor/patch availability; use `--exact` when needed. Inspect coverage: a publisher README is a limited reference, and private/local/unresolved dependencies need appropriate project or maintainer sources. Hosting on GitHub or pkg.go.dev alone does not establish maintainer identity.
 
 If the user asks to investigate a community solution, verify its API assumptions against the applicable maintainer references or standards. Where documentation leaves a choice open, choose based on the user's needs and project conventions.
 
@@ -68,9 +96,7 @@ If web access fails, use local version-matched package declarations/source, `go 
 
 ## Implement and verify
 
-Use available specialized companions when the change calls for them: `review-security` for consequential trust boundaries, `review-accessibility` for accessibility journeys, and `plan-safe-migrations` before database or persisted API/data compatibility changes. Preserve review-only scope and use proportionate checks; ordinary UI edits do not require unrelated audits.
-
-For function/module additions, refactors, or documentation changes, read [Code quality](references/code-quality.md). Use cohesive responsibilities, visible side-effect boundaries, useful contract/rationale documentation, and a search for existing behavior before introducing a production helper. Use `audit-code-reuse` when available for substantial duplication or unused-code questions; an absent text reference alone does not justify deletion.
+For function/module additions, refactors, or documentation changes, read [Code quality](references/code-quality.md). Use cohesive responsibilities, visible side-effect boundaries, useful contract/rationale documentation, and a search for existing behavior before introducing a production helper. An absent text reference alone does not justify deletion.
 
 Adapt documented APIs to the project's requirements instead of transplanting a whole example. Preserve relevant behavior, follow existing organization, and introduce dependencies only for a concrete need.
 

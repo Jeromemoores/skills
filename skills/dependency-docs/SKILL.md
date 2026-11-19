@@ -56,6 +56,26 @@ For live detection while a human changes manifests, the user may explicitly run:
 python "SKILL_DIR/scripts/dependency_docs.py" watch --project "REPO_DIR" --format table
 ```
 
-This foreground watcher checks manifest fingerprints and ensures docs when they change; stop with Ctrl+C. It is not installed as a background service and skills cannot monitor edits while no agent/watcher is running. `watch --once` performs one cycle. `--strict` makes missing coverage fail a check; `--refresh` deliberately refreshes selected references. `--root PATH` before the command or `DEPENDENCY_DOCS_HOME` chooses a library. By default the web library/user cache is shared between agents. Search is bounded and project/version scoped; run ensure again after manifest changes before searching.
+This foreground watcher checks manifest fingerprints and ensures docs when they change; stop with Ctrl+C. It is not installed as a background service and skills cannot monitor edits while no agent/watcher is running.
+
+## Options and cache maintenance
+
+- `--exact`: require the exact cached package version instead of same-major reuse.
+- `--include-transitive`: also inventory supported lockfile transitive entries.
+- `--strict`: exit with a failure when any dependency lacks cached coverage.
+- `--refresh` (`ensure`, `watch`): deliberately refresh selected references.
+- `watch --once`: perform one cycle and exit.
+- `--root PATH` before the command, or `DEPENDENCY_DOCS_HOME`: choose a library. By default the web library/user cache is shared between agents.
+
+Search is bounded and project/version scoped; run `ensure` again after manifest changes before searching.
+
+`verify` checks cached files against their recorded checksums and the index. To reclaim space, use the bundled shared runtime on the same library; `check` and `ensure` print it as `root`:
+
+```text
+python "SKILL_DIR/scripts/dependency_docs.py" verify
+python "SKILL_DIR/scripts/doclib.py" --root "LIBRARY_ROOT" prune --dry-run
+```
+
+`prune` keeps snapshots used by any existing recorded project, including projects recorded by this skill, and removes the rest. Review the dry run before running it without `--dry-run`.
 
 Return relevant dependency/version discoveries, docs actually read, coverage/provenance limits and executed verification. A docs check is not a vulnerability scan, an upgrade recommendation or a claim that every ecosystem has been fully resolved.

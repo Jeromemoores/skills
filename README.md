@@ -77,6 +77,8 @@ Each set includes the four shared roles, `dependency-docs`, `review-security` an
 | Shared | `review-security` | Focused trust-boundary/security review with separate Web and Unreal guidance |
 | Shared | `plan-safe-migrations` | Database/API and Unreal save/reflected-asset compatibility, rehearsal and recovery planning |
 
+The review skills mention `propose-code-review` for Accept/Reject previews of proposed changes. It is a separate optional skill that is not part of these bundles; without it, reviews report findings or edit directly within the authorized scope.
+
 For example: “Use official-stack-dev to extend this existing repo. Establish its versions, conventions and baseline before changing behavior.” Or: “Use official-unreal-dev and review-and-repair-code to review this gameplay system; suggest cohesive function boundaries and evidence-based optimizations without making edits.”
 
 ## How documentation works
@@ -123,6 +125,8 @@ Use `plan-safe-migrations` before consequential schema, persisted API/data, game
 The existing reviewer and Web/Unreal validation skills now include regression-test design: independent oracles, representative fixtures, deterministic ordering, correct runtime boundaries and a source/build snapshot. Skills route relevant work without imposing unrelated audits on ordinary edits. See [validation evidence](VALIDATION.md) for packaging checks and the independent source-only scenario evaluation.
 
 ## Review and validation approach
+
+v1.3.1 is a documentation patch: the planner, implementer, stack, Unreal and code-review entrypoints open with a short workflow and a single companion-skill list, and nine references add version-sensitive "commonly missed cases" lists to verify against the project's actual versions. Review tightened overbroad claims about serialization, lifecycle and platform behavior. Release checksums are now written with LF line endings, and the shell bootstrap tolerates legacy CRLF checksum files.
 
 v1.3.0 adds two Web-only design skills. Use `design-web-interface` for a new or reshaped page/flow; it establishes the user task and content, preserves relevant existing brand/components, chooses a coherent visual direction and inspects the rendered result. Use `review-web-design` for visual/UX critique or a de-slop pass, separating reproducible barriers, unsupported claims and optional taste changes. Familiar fonts, palettes, cards and dense tables are evaluated in context rather than banned.
 

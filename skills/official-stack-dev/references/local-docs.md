@@ -31,6 +31,7 @@ Search defaults to five results and requires all query words. Use shorter querie
 Other commands:
 
 ```text
+python "SKILL_DIR/scripts/doclib.py" detect --project "PROJECT_DIR"
 python "SKILL_DIR/scripts/doclib.py" status
 python "SKILL_DIR/scripts/doclib.py" sync
 python "SKILL_DIR/scripts/doclib.py" sync --source nextjs --ref v16.4.6
@@ -40,6 +41,6 @@ python "SKILL_DIR/scripts/doclib.py" update
 python "SKILL_DIR/scripts/doclib.py" prune --dry-run
 ```
 
-`sync` resolves latest stable releases and website revisions. `--refresh` rechecks upstream while preserving old snapshots. No refresh is scheduled. `update` refreshes branch-tracking sources in use (MDN, React current docs, Go guides), reselects every recorded project, then prunes; it skips pruning if any step fails. `prune` deletes snapshots that neither the active selection nor an existing recorded project uses, forgets projects whose directory no longer exists, and removes crash leftovers; preview with `--dry-run`, especially when a project lives on a disconnected drive. After a download failure, cached sources remain usable; disclose any missing coverage. First-time downloads require network access, while cached ensure/search/read can operate offline. A writer lock prevents concurrent updates; do not remove a lock belonging to a running process.
+`detect` reports the versions and web flags `ensure` would use, without downloading or recording anything. `sync` resolves latest stable releases and website revisions. `--refresh` rechecks upstream while preserving old snapshots. No refresh is scheduled. `update` refreshes branch-tracking sources in use (MDN, React current docs, Go guides), reselects every recorded project, then prunes; it skips pruning if any step fails. `prune` deletes snapshots that neither the active selection nor an existing recorded project uses, forgets projects whose directory no longer exists, and removes crash leftovers; preview with `--dry-run`, especially when a project lives on a disconnected drive. After a download failure, cached sources remain usable; disclose any missing coverage. First-time downloads require network access, while cached ensure/search/read can operate offline. A writer lock prevents concurrent updates; do not remove a lock belonging to a running process.
 
 Data location: explicit `--root PATH` (before the command), then `OFFICIAL_DOCS_HOME`, then an existing preferred library in `scripts/library-location.json`, then the standalone library's directory, then `%LOCALAPPDATA%/official-stack-docs` or `~/.cache/official-stack-docs`. This distribution has no machine-specific preference; the helper automatically chooses the user cache unless explicitly configured. Both agents share that default cache. To move the skill, copy its entire folder including `scripts`, `references`, and `agents`; no corpus transfer or service configuration is required.

@@ -64,7 +64,7 @@ def build():
                 z.writestr(info, data)
         assets.append(archive)
     (output / "SHA256SUMS").write_text("".join(
-        f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in assets), encoding="utf-8")
+        f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in assets), encoding="utf-8", newline="\n")  # LF: POSIX installers compare the name field exactly
     print(f"Built three ZIPs and checksums for v{version} in {output}")
     return output
 

@@ -5,29 +5,60 @@ description: "Implement a bounded software task from a coordinator's packet or a
 
 # Implement Task
 
-When work uses third-party dependencies, use `dependency-docs` if installed to check resolved versions and prepare missing maintainer references before choosing consequential APIs. After changing a manifest or lockfile, rerun its `ensure` and include relevant version changes or coverage gaps in the handoff. Respect the project's npm/Yarn or other package manager; preparing docs does not require installing/upgrading packages. A limited publisher README may require additional matching API documentation.
-
 Complete the assigned outcome with a focused, reviewable change. The task packet and original requirements establish the scope; a smaller model or context window is a reason for a clearer assignment, not weaker correctness criteria.
+
+## Workflow
+
+1. Read the assignment, project instructions, contracts and the code involved.
+2. Establish actual versions and read matching documentation for consequential APIs.
+3. Implement the simplest change that meets the requirement, inside your assigned files.
+4. Run the relevant checks, including failure paths.
+5. Hand back what changed, what ran and what remains unverified.
+
+## Companion skills
+
+Use these when installed and the task calls for them; otherwise apply the same criteria directly. None of them expands the task's scope.
+
+- `dependency-docs`: resolved dependency versions and maintainer references before choosing consequential third-party APIs.
+- `official-stack-dev`: React, Next.js, Go, CSS and JavaScript documentation and conventions.
+- `official-unreal-dev`: Unreal Engine references, local headers and engine-specific constraints.
+- `design-web-interface`: new or substantially reshaped Web UI/UX.
+- `review-web-design`: requested rendered design/UX checking and de-slop work.
+- `audit-code-reuse`: a substantial question about existing or duplicate behavior.
+
+## Understand the assignment
 
 Read the applicable project instructions, task/contract revision, relevant existing code, and acceptance checks. Verify claimed dependencies are actually available. If the packet is incomplete, infer routine details from the project and ask the coordinator about a material unresolved interface/behavior decision. Continue independent work where possible; do not invent a shared API or silently expand the task.
 
 In an existing repo, identify the affected package/module, integration points, current versions/conventions, relevant tests, and pre-existing working changes. Establish a targeted baseline before consequential edits when feasible; keep existing failures and missing environment access distinct from regressions. Extend compatible implementations instead of re-scaffolding or introducing a parallel subsystem. Preserve unrelated work and public/persisted contracts; upgrades, broad cleanup, and breaking migrations require actual task scope. Use the relevant stack's existing-project guidance when available.
 
-Use version-appropriate maintainer documentation for consequential APIs and patterns. For React/Next.js/Go/CSS/JavaScript, use `official-stack-dev` if installed; for Unreal Engine use `official-unreal-dev` when available, including its local references and engine-specific constraints. Otherwise consult appropriate maintainer references directly. Read relevant semantics, constraints, lifecycle/error behavior, and support notes rather than copying a familiar snippet. References already read in the current task can be reused.
+## Use matching documentation
 
-For new or substantially reshaped Web UI/UX, use `design-web-interface` when installed or follow the coordinator's existing design brief; preserve approved content, brand/tokens and affected flow/state requirements. Use `review-web-design` for requested rendered design/UX checking and de-slop work. These design checks complement implementation/accessibility checks and do not require redesigning unrelated UI during routine code edits.
+Use version-appropriate maintainer documentation for consequential APIs and patterns, through the stack companion above or by consulting maintainer references directly. Read relevant semantics, constraints, lifecycle/error behavior, and support notes rather than copying a familiar snippet. References already read in the current task can be reused.
+
+For third-party dependencies, check resolved versions and prepare missing maintainer references before choosing consequential APIs. After changing a manifest or lockfile, rerun the `dependency-docs` `ensure` and include relevant version changes or coverage gaps in the handoff. Respect the project's npm/Yarn or other package manager; preparing docs does not require installing/upgrading packages. A limited publisher README may require additional matching API documentation.
+
+For new or substantially reshaped Web UI/UX, follow the design companion or the coordinator's existing design brief; preserve approved content, brand/tokens and affected flow/state requirements. Design checks complement implementation/accessibility checks and do not require redesigning unrelated UI during routine code edits.
+
+## Stay within ownership
 
 Work within assigned files or the established single-writer arrangement. Read shared contracts freely, but request reassignment before editing files another agent owns. Report a necessary shared-contract, dependency, migration, or configuration change to the coordinator before concurrent implementations diverge. Do not reset or overwrite unrelated changes. If no team is running, preserve the same scope discipline without inventing approvals for routine edits.
+
+## Implement
 
 Implement the simplest approach that meets the actual requirement and existing conventions. Preserve error handling, ownership, data invariants, and compatibility relevant to the change. Important concurrency, authorization, or storage guarantees must come from an appropriate mechanism; an in-process shortcut does not establish correctness across multiple service instances. Escalate an unresolved high-impact design question rather than disguising it behind a TODO or placeholder success response.
 
 For a consequential documented contract, identify the implementing mechanism and an observable check that could falsify the guarantee. For asynchronous/shared mutable state, identify the operation identity, owner/lifetime, notification path, and cleanup authority. Check that an older completion cannot replace or clear newer work, and that supported retries retain the same logical operation across owner replacement or recovery. Apply relevant web/engine lifecycle guidance; do not mistake cancellation of a local wait for rollback of a remote effect. Include these invariants and actual verification in the handoff where relevant.
 
-Before adding a production helper, search for existing behavior by domain operation and types as well as names; use `audit-code-reuse` if available for a substantial question. Reuse compatible logic or explain why the nearest candidate does not fit. Give functions one coherent responsibility, keep calculation/query logic separate from unrelated mutation/presentation, and make intentional orchestration clear. Preserve atomic operations when separating functions. Document public/non-obvious contracts and important reasons/constraints using the language's conventions; avoid comments that merely restate obvious code.
+Before adding a production helper, search for existing behavior by domain operation and types as well as names. Reuse compatible logic or explain why the nearest candidate does not fit. Give functions one coherent responsibility, keep calculation/query logic separate from unrelated mutation/presentation, and make intentional orchestration clear. Preserve atomic operations when separating functions. Document public/non-obvious contracts and important reasons/constraints using the language's conventions; avoid comments that merely restate obvious code.
+
+## Verify
 
 Run the existing targeted checks appropriate to the task. Add a behavioral regression test when a meaningful defect or requirement needs it; avoid tests that merely restate a trivial implementation. Check relevant failure paths and document any environment limitation. Do not delete assertions, skip failing tests, weaken types, swallow errors, or introduce fake/stubbed behavior merely to make checks pass. A deliberate product-approved stub must be identified as such.
 
 When substantial test design is needed, or the task changes a producer/consumer or persisted-data boundary, consult the shared reviewer's [Regression evidence](../review-and-repair-code/references/regression-test-design.md) when installed. Follow emitted values through the actual validator/consumer and next operation using supported boundary/legacy data; do not assume locally accepted values will be accepted downstream. Otherwise establish the same essentials directly: observable contract, independent expected result, representative fixture, correct execution boundary and source/build snapshot.
+
+## Hand off
 
 Return a concise handoff: task ID, changed files and behavior, relevant docs actually read, exact checks executed and outcomes, known failures/limitations, and interface or integration concerns. Distinguish completed code from untested claims. In a team workflow, hand the task back as ready for review; do not claim independent review or update another role's acceptance record. Respond to concrete findings and keep any repair within assigned ownership.
 

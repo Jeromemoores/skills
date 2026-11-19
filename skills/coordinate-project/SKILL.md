@@ -7,25 +7,47 @@ description: "Plan and coordinate a requested multi-agent or mixed-model softwar
 
 Keep the user's intent, scope, contracts, and completion criteria consistent across planning, implementation, and review. Use a stronger planning/review model and economical implementation models when the user has selected that mix and the runner supports it. Skills describe behavior; the runner controls actual model selection, permissions, and execution.
 
-## Establish a shared plan
+## Workflow
 
-Use `dependency-docs` when installed for the affected project's dependency/version inventory and relevant cached references. Include important coverage gaps in task packets. Give manifest/lockfile changes one owner and have that owner rerun documentation preparation before dependent API implementation; the planner need not download every unrelated manual for each worker.
+1. Inspect the project and existing task state; establish outcome, requirements and contracts.
+2. Divide the work into small verifiable tasks with explicit owners and dependency order.
+3. Route specialized work and delegate ready tasks with compact packets.
+4. Have changes reviewed against the same acceptance contract; keep repairs bounded.
+5. Verify the integrated journey and report what was actually delivered and checked.
+
+## Companion skills
+
+Use these when installed and the work calls for them; otherwise apply the relevant criteria directly. Include their findings and obligations in the normal task packet. They do not add audits to unrelated tasks or authorize production changes.
+
+- `dependency-docs`: the affected project's dependency/version inventory and cached references.
+- `plan-web-capacity`: workload/capacity assessment for consequential web architecture.
+- `plan-unreal-project`: Unreal platform, lifecycle, asset, networking and performance assessment.
+- `plan-safe-migrations`: consequential persisted-data or reflected-asset transitions.
+- `design-web-interface`: task flow, content and visual direction for new or substantially reshaped Web interfaces.
+- `review-web-design`: requested rendered UI/UX or de-slop review.
+- `review-security`: a requested assessment or consequential trust-boundary change.
+- `review-accessibility`: affected web accessibility work.
+- `review-and-repair-code`: evidence-based review and repair of delivered changes.
+
+## Establish a shared plan
 
 Inspect the project and existing task state before making a new plan. Reuse its established tracking system; for a portable local workflow, the coordinator owns concise plan/task/contract files. Do not create a competing board or impose a large planning ceremony on a small change.
 
 For an existing repository, onboard the affected system before task assignment: actual applications/modules and versions, current architecture/decisions, entry points and consumers, compatible reuse candidates, pending work, and relevant baseline checks/failures. Plan an incremental integration into that system. Include affected contracts and any required migration/rollout compatibility in the task packets; do not default to a new scaffold, stack upgrade, or wholesale rewrite. Keep discovery proportional to the request and use available stack-specific existing-project guidance.
 
-Record the outcome, non-goals, important requirements/invariants, acceptance evidence, and unresolved decisions. For consequential web architecture use a workload/capacity assessment through `plan-web-capacity` when available; for Unreal use the platform, lifecycle, asset, networking, and performance assessment in `plan-unreal-project` if installed. Otherwise apply the relevant criteria directly. Identify actual versions, maintainer references, and interface/data contracts before delegating code that depends on them. Ask the user only about material decisions that cannot be established from context; continue independent work in the meantime.
+Record the outcome, non-goals, important requirements/invariants, acceptance evidence, and unresolved decisions. For consequential web or Unreal architecture, obtain the capacity or platform assessment from the planning companion above. Identify actual versions, maintainer references, and interface/data contracts before delegating code that depends on them. Ask the user only about material decisions that cannot be established from context; continue independent work in the meantime.
 
 Turn high-impact guarantees into acceptance obligations before assigning dependent work: documented constraint, implementing mechanism/owner, and observable failure-case evidence. Include relevant operation identity, lifecycle/cleanup, notification, and recovery boundaries in shared contracts; do not leave a client/server retry guarantee owned by neither task. Keep this proportional to risk and reuse existing plan/contract records.
 
 Divide the work into small verifiable tasks with dependency order and explicit ownership. Use [task handoffs](references/task-handoffs.md) for a compact packet that a focused implementer can execute without guessing. The coordinator owns changes to shared API/schema contracts, dependency manifests/lockfiles, migrations, and the task ledger, or assigns a single named owner. Scope ownership to the actual task, not a permanent ban on editing those files.
 
+Include important dependency-documentation coverage gaps in task packets. Give manifest/lockfile changes one owner and have that owner rerun documentation preparation before dependent API implementation; the planner need not download every unrelated manual for each worker.
+
 ## Route work deliberately
 
-Route a requested security assessment to `review-security`, affected web accessibility work to `review-accessibility`, and consequential persisted-data/reflected-asset transitions to `plan-safe-migrations` when available. Include relevant findings/compatibility obligations in the normal task packet; do not turn every task into three additional audits or treat a plan as authorization to execute production changes.
+Route security, accessibility and migration work to the companions above; do not turn every task into three additional audits.
 
-For new or substantially reshaped Web interfaces, use `design-web-interface` when installed to establish task flow, supplied content, visual direction and relevant brand/components before dependent UI implementation. Pass those constraints and affected states to the builder. Route requested rendered UI/UX or de-slop review to `review-web-design`; assign relevant browser evidence to an owner and keep design preference separate from functional/accessibility acceptance. Reuse approved design decisions for small changes instead of inserting a redesign stage into every coding task.
+For new or substantially reshaped Web interfaces, establish task flow, supplied content, visual direction and relevant brand/components before dependent UI implementation, and pass those constraints and affected states to the builder. For a rendered design review, assign relevant browser evidence to an owner and keep design preference separate from functional/accessibility acceptance. Reuse approved design decisions for small changes instead of inserting a redesign stage into every coding task.
 
 For an explicitly requested delegated workflow, use available agent tools to assign ready tasks. Pass only the relevant requirements, contracts, references, files, baseline, and checks. Delegate independent file sets in parallel; serialize overlapping edits and dependent tasks. Prefer a narrow implementation model for well-specified routine work. Keep ambiguous design, concurrency/data-integrity decisions, and difficult diagnosis with an appropriately capable role. Do not assume a model is adequate solely from its price or label.
 
@@ -35,7 +57,7 @@ Track each task's owner, dependencies, state, and current evidence. Builder comp
 
 ## Review, repair, and integrate
 
-Assign review to a separate agent/context when available, supplying the same acceptance contract and a reproducible baseline. Use `review-and-repair-code` if installed, or require evidence-based findings and relevant verification directly. Grant one writer ownership of affected files before repairs; stop overlapping builder edits first. Builders may fix narrow findings, while complex or repeated failures should return to the reviewer/planner for diagnosis.
+Assign review to a separate agent/context when available, supplying the same acceptance contract and a reproducible baseline. Require evidence-based findings and relevant verification. Grant one writer ownership of affected files before repairs; stop overlapping builder edits first. Builders may fix narrow findings, while complex or repeated failures should return to the reviewer/planner for diagnosis.
 
 Keep repair cycles bounded. After two unsuccessful attempts at the same underlying issue, reassess the contract, reproduction, or implementation approach instead of repeating the same prompt. Escalate using the user's authorized model/cost options, or report the unresolved blocker. Do not declare a task accepted while material correctness findings or required checks remain unresolved.
 

@@ -7,13 +7,32 @@ description: "Review new or existing code for correctness, maintainability, and 
 
 Inspect the implementation and its observable behavior rather than trusting a builder's summary. Prioritize defects that affect the user's requirements, correctness, data integrity, integration, and relevant security/error boundaries. Keep style preferences separate from material findings.
 
+## Workflow
+
+1. Establish the requirements, baseline and the actual change snapshot.
+2. Trace high-impact paths and check consequential contracts against matching documentation.
+3. Reproduce suspected defects and run relevant checks, including cases the builder did not test.
+4. Report findings with evidence, separately from optional improvements.
+5. Repair only when authorized, then verify the correction.
+
+## Companion skills
+
+Use these when installed and the review calls for them; otherwise consult appropriate maintainer references directly. They specialize relevant work; they do not require unrelated audits or authorize repairs during a review-only assignment.
+
+- `review-security`: a requested security assessment or a focused consequential trust-boundary question.
+- `review-accessibility`: affected web accessibility journeys.
+- `review-web-design`: a requested visual/UX critique or de-slop pass on the rendered interface.
+- `plan-safe-migrations`: a consequential persisted, schema or reflected-format transition.
+- `dependency-docs`: resolved versions, changed inventory and reference coverage for third-party APIs.
+- `official-stack-dev`, `official-unreal-dev`: version-matched maintainer documentation for their stacks.
+- `audit-code-reuse`: deeper reuse and reachability questions.
+- `propose-code-review`: Accept/Reject previews of proposed changes instead of direct edits, when the user asks for them.
+
 ## Establish the review boundary
 
-Use `review-security` for a requested security assessment or a focused consequential trust-boundary question; use `review-accessibility` for affected web accessibility journeys. Use `plan-safe-migrations` before a consequential persisted/schema/reflected-format transition when installed. These companions specialize relevant work; they do not require unrelated audits or authorize repairs during a review-only assignment.
+Keep design recommendations separate from code defects and measured performance. A code-only review cannot establish visual quality from a passing build.
 
-Use `review-web-design` when installed for a requested visual/UX critique or de-slop pass, including actual rendered hierarchy and task behavior. Keep its contextual design recommendations separate from code defects and measured performance. A code-only review cannot establish visual quality from a passing build.
-
-For affected third-party APIs or dependency changes, use `dependency-docs` when installed to check the actual resolved versions, changed inventory and reference coverage. Prepare missing relevant docs and verify consequential contracts against matching maintainer sources. Separate missing documentation from demonstrated code defects; unrelated undocumented dependencies do not by themselves block the review. Do not infer exact patch behavior from a same-major snapshot or complete API coverage from a publisher README.
+For affected third-party APIs or dependency changes, check the actual resolved versions, changed inventory and reference coverage. Prepare missing relevant docs and verify consequential contracts against matching maintainer sources. Separate missing documentation from demonstrated code defects; unrelated undocumented dependencies do not by themselves block the review. Do not infer exact patch behavior from a same-major snapshot or complete API coverage from a publisher README.
 
 Read the original requirements, applicable project instructions, shared contracts, relevant acceptance checks, and the actual diff/change snapshot. Identify the baseline and relevant configuration/dependency versions. If other agents are writing concurrently, coordinate a stable snapshot or single-writer handoff before evaluating or repairing affected files. Preserve unrelated user/agent work.
 
@@ -21,9 +40,9 @@ For established repositories, review integration with the existing module bounda
 
 Inspect high-impact paths first: state transitions, API/request validation, database transactions/concurrency, ownership/authorization, retries/idempotency, resource cleanup, and cross-component contract compatibility when the change touches them. Follow the actual control/data flow and important dependencies. Do not turn every review into an unrelated full-system audit.
 
-Check changed functions for coherent responsibilities, hidden side effects, unnecessary duplicate domain logic, and missing/stale contract documentation. Verify whether a compatible implementation already exists before accepting a new helper. Use `audit-code-reuse` when available for deeper reuse/reachability questions. Do not demand tiny wrappers or remove public/framework/dynamic entry points simply to satisfy a style or unused-code count; preserve behavior, transaction boundaries, and language idioms.
+Check changed functions for coherent responsibilities, hidden side effects, unnecessary duplicate domain logic, and missing/stale contract documentation. Verify whether a compatible implementation already exists before accepting a new helper. Do not demand tiny wrappers or remove public/framework/dynamic entry points simply to satisfy a style or unused-code count; preserve behavior, transaction boundaries, and language idioms.
 
-Consult the version-matched maintainer documentation for disputed or consequential API assumptions. Use the applicable documentation skill when available: `official-stack-dev` for its supported web stacks or `official-unreal-dev` for Unreal. Otherwise consult appropriate maintainer references directly. A citation must support the behavior in question. A passing type check or familiar pattern does not establish the runtime contract. Conversely, distinguish a confirmed defect from a hypothesis requiring missing environment evidence.
+Consult the version-matched maintainer documentation for disputed or consequential API assumptions. A citation must support the behavior in question. A passing type check or familiar pattern does not establish the runtime contract. Conversely, distinguish a confirmed defect from a hypothesis requiring missing environment evidence.
 
 Translate consequential documented contracts into concrete obligations and trace their implementation: notification on mutation, lifetime/cleanup ownership, retry identity, or atomicity as applicable. Check callbacks and adapters actually fulfill the contract rather than merely importing the correct API. Derive at least one focused adversarial check for a high-impact guarantee touched by the change, independently of the builder's happy-path tests; reuse equivalent coverage when it exists. Select relevant cases rather than imposing an unrelated test matrix.
 
@@ -47,7 +66,7 @@ For function boundaries, identify responsibilities that change for different rea
 
 For optimization, inspect demonstrable unnecessary work such as repeated queries/network calls, avoidable scans or allocations, duplicate derived computations, and unjustified render/per-frame processing when relevant to the code. Explain the workload and execution frequency that would make it matter. Distinguish a measured bottleneck, a code-supported efficiency opportunity, and a hypothesis requiring profiling. State a representative benchmark/trace or behavioral check for the proposed change; never invent speedups or require a benchmark for a readability-only extraction. Consider caching invalidation, memory, contention, correctness, and complexity costs before suggesting caching, memoization, pooling, or concurrency. Use matching API documentation and stack-specific profiling guidance when needed.
 
-For Unreal C++/Blueprint reviews, apply these criteria to the actual gameplay/module/asset boundaries. Use `official-unreal-dev` and its code-quality reference when available for concrete function/component separation, reuse, and performance recommendations. Check the effect on UObject/world lifetime, reflected/Blueprint consumers, authority/replication, serialization, and target builds before suggesting an extraction or optimization. Distinguish game-thread, rendering/GPU, memory, streaming, and network evidence; do not prescribe removing Tick, moving Blueprint logic to C++, adding subsystems, or pooling without a concrete reason and verification plan.
+For Unreal C++/Blueprint reviews, apply these criteria to the actual gameplay/module/asset boundaries. Use the Unreal companion's code-quality reference when available for concrete function/component separation, reuse, and performance recommendations. Check the effect on UObject/world lifetime, reflected/Blueprint consumers, authority/replication, serialization, and target builds before suggesting an extraction or optimization. Distinguish game-thread, rendering/GPU, memory, streaming, and network evidence; do not prescribe removing Tick, moving Blueprint logic to C++, adding subsystems, or pooling without a concrete reason and verification plan.
 
 For each recommendation, provide the file/function location, concrete evidence/problem, a bounded proposed change or short outline, expected benefit, material tradeoffs, and how to verify preservation/improvement. Mark priority and whether it blocks acceptance based on actual requirements or evidence. A nonblocking improvement is not an unresolved correctness defect. Prefer the few changes with the clearest value over a large cleanup list, and retain intentional project conventions when no practical benefit justifies changing them.
 

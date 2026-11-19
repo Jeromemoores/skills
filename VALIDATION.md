@@ -1,6 +1,42 @@
-# v1.3.0 validation
+# v1.3.1 validation
 
-## Scope and package checks
+## v1.3.1 scope and current evidence
+
+This patch changes skill documentation and two release-tooling details. No documentation helper or skill set membership changed.
+
+Release tooling: `SHA256SUMS` is now written with LF line endings. Windows-built v1.3.0 used CRLF; implementations that retain the carriage return in the filename field can fail exact matching. `install.sh` strips carriage returns before matching, and the writer's output is checked for LF. Git Bash's `awk` tolerates the carriage return, so this review does not claim reproduction of the old failure on a native macOS/Linux host. `.gitattributes` pins `*.json`, `*.yaml` and `VERSION` checkout line endings to LF.
+
+Five entrypoints (`implement-task`, `coordinate-project`, `official-stack-dev`, `official-unreal-dev`, `review-and-repair-code`) were restructured: each opens with a short workflow and one companion-skill list replacing scattered routing sentences, and `implement-task` gained section headings. The guidance itself was kept; routing sentences were consolidated, not removed. These five files are about 10% longer than in v1.3.0.
+
+Nine references gained a "Commonly missed cases" list (Go, React, Next.js, CSS/JavaScript, Web security, Unreal security, Web migrations, Unreal persistence, Unreal C++ quality), each framed as candidates to verify against the project's version. `dependency-docs` documents its options, `verify` and cache pruning; the web local-docs reference documents `detect`; `review-and-repair-code` and the README mention the separate optional `propose-code-review` skill.
+
+Claude's prepublication draft recorded **96 tests passed in 107.893 seconds** on Windows, local-link/frontmatter checks and command/flag parsing checks. The final publication checks below supersede that test count.
+
+The initial added lists were written from general engineering knowledge, not verified across every framework or engine version. Publication review corrected specific overgeneralizations using primary references; the remaining lists are scoped prompts for version-matched investigation, not a certified catalog of universal rules.
+
+## Final publication review and checks
+
+Retained the workflow restructuring and expanded helper documentation. Corrected guidance on sticky positioning inside scroll containers, JSON Date/Map/Set conversion, React effect/ref/draft exceptions, Next.js environment-variable exposure, Go timeout/error semantics, conditional migration strategies, and Unreal save/delegate/Live Coding behavior. In particular, Epic's [SaveGameToSlot contract](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UGameplayStatics/SaveGameToSlot?application_version=5.8) does not filter properties by the SaveGame flag; custom archives can differ. [React ref initialization](https://react.dev/reference/react/useRef), [CSS positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position), [JSON behavior](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify), [Next environment variables](https://nextjs.org/docs/app/guides/environment-variables), [Epic delegate bindings](https://dev.epicgames.com/documentation/en-us/unreal-engine/delegates-and-lambda-functions-in-unreal-engine) and [Live Coding](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-live-coding-to-recompile-unreal-engine-applications-at-runtime) support the revised distinctions. These spot checks do not validate every item on every historical version.
+
+On a stable final skill tree, `python tests/run_tests.py`: **97 tests passed in 109.788 seconds**. The added end-to-end shell-bootstrap test actually installs from a CRLF checksum fixture. All **16 skill entrypoints** passed the skill-creator validator, and source/archive local-reference checks passed. The new verify/detect documentation was checked against the bundled command parsers. One earlier run overlapped a final reference edit and had two archive/source snapshot mismatches; it was retained locally, then rerun without source edits rather than changing assertions.
+
+Fresh Node 24.15.0/Chromium 159.0.8154.6 probes verified Date/undefined/Map/Set JSON behavior, structured-clone type preservation, invalid-URL fetch rejection, and sticky positioning inside an `overflow:auto` scroller. No Unreal build/runtime, native macOS/Linux host, physical-device run or fresh model benchmark was performed in this review. Installer checks used Windows PowerShell, Command Prompt and Git Bash. Local review evidence is under `E:/coding/skills/.cache/review-1.3.1` and is not shipped.
+
+Installed the final 16 skills for both local Claude and Codex profiles; 138 installed files matched source, machine-local preferences were preserved, and all three bundles' skill Markdown matched the final tree. Skill membership remains Web 13, Unreal 10 and combined 16. No application/game repository was edited for this patch.
+
+## v1.3.1 independent forward-test
+
+Four fresh reviewer contexts each performed a review-only, source-only review of a small fixture with planted defects: a Go/Next.js/PostgreSQL web fixture (18 defects, 3 correct "control" patterns) and an Unreal C++ fixture (12 defects, 2 controls). Each fixture was reviewed once with the v1.3.0 skills and once with the v1.3.1 skills, under anonymous variant labels. Reviewers started from `review-and-repair-code` and chose their own companions and references. They were barred from the network, the documentation helpers, installed skills and the other variant. The answer key was written before any reviewer ran.
+
+Result: all four reviewers found every planted defect (18/18 and 12/12 for both versions) and none reported a control as a defect. With the restructured entrypoints, reviewers reached the same references as before, honored review-only scope, separated findings from optional improvements and labeled unverified engine/framework behaviour as unverified.
+
+No regression was observed in those sampled source-only fixtures. This does **not** show an improvement: both versions scored 100%, so the fixtures could not distinguish them. There was one reviewer per arm, the reviewers used the same model family that wrote the fixtures and the new lists, and nothing was compiled or run. That evaluation used Claude's prepublication draft, not all final wording corrections described above. The v1.3.0 design forward-test below was not repeated.
+
+Fixtures, answer key, scoring and raw transcripts are outside the release tree at `E:/coding/skill-forward-test-v1.3.1` and are not shipped.
+
+## Historical v1.3.0 evidence
+
+## v1.3.0 scope and package checks
 
 Adds `design-web-interface` and `review-web-design` to the Web bundle, with original instructions and focused references for task flows/states, visual direction, phone/tablet/desktop input/layout, and rendered critique/de-slop. Planner, implementer, official-stack development and code-review skills route relevant work to them when installed. No third-party skill runtime, hook, design catalog or new package dependency is imported. The Unreal-only set retains 10 skills; Web has 13; combined has 16 unique skills.
 

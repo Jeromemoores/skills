@@ -87,7 +87,7 @@ function Invoke-RestMethod {
             args = [POWERSHELL, "-NoProfile", "-File", str(harness), str(assets), str(loader), str(self.profile), str(ROOT)]
         return subprocess.run(args, env=env, capture_output=True, text=True, timeout=60)
 
-    def run_sh(self, selected="all", target="both", bootstrap=False, corrupt=False, variant=None, bare=False):
+    def run_sh(self, selected="all", target="both", bootstrap=False, corrupt=False, variant=None, bare=False, crlf_sums=False):
         env = os.environ.copy()
         args = [SHELL]
         stdin = None
@@ -107,6 +107,10 @@ function Invoke-RestMethod {
                 archive.write_bytes(archive.read_bytes() + b"corrupted")
             fake_bin = self.folder / "bin"
             fake_bin.mkdir()
+            if crlf_sums:
+                sums = assets / "SHA256SUMS"
+                sums.write_bytes(sums.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+                self.assertIn(b"\r\n", sums.read_bytes())
             fake_curl = fake_bin / "curl"
             fake_curl.write_text('''#!/bin/sh
 set -eu
@@ -256,6 +260,11 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
         self.assert_install()
 
     @unittest.skipUnless(SHELL, "POSIX shell is unavailable")
+    def test_shell_download_bootstrap_accepts_legacy_crlf_checksums(self):
+        self.assert_ok(self.run_sh(bootstrap=True, crlf_sums=True))
+        self.assert_install()
+
+    @unittest.skipUnless(SHELL, "POSIX shell is unavailable")
     def test_shell_web_release_defaults_to_web_only(self):
         self.assert_ok(self.run_sh(bootstrap=True, variant="web"))
         self.assert_install("web")
@@ -295,6 +304,8 @@ if [ -n "$out" ]; then cp "$source" "$out"; else cat "$source"; fi
 
     def test_release_has_only_three_zips_and_checksums(self):
         version = (ROOT / "VERSION").read_text().strip()
+        # Emit portable LF checksums; bootstrap also accepts legacy CRLF files.
+        self.assertNotIn(b"\r", (self.assets / "SHA256SUMS").read_bytes())
         self.assertEqual({p.name for p in self.assets.iterdir()}, {
             f"skills-v{version}.zip", f"web-skills-v{version}.zip",
             f"unreal-skills-v{version}.zip", "SHA256SUMS"})

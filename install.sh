@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-version=1.3.0
+version=1.3.1
 release="https://github.com/Jeromemoores/skills/releases/download/v$version"
 target=both
 skill_set=all
@@ -35,7 +35,8 @@ if [ -z "$source_root" ]; then
     archive="$package.zip"
     curl -fLsS "$release/$archive" -o "$work/$archive"
     curl -fLsS "$release/SHA256SUMS" -o "$work/SHA256SUMS"
-    expected=$(awk -v file="$archive" '$2 == file { print $1 }' "$work/SHA256SUMS")
+    # Tolerate a checksum file published with CRLF line endings.
+    expected=$(tr -d '\r' < "$work/SHA256SUMS" | awk -v file="$archive" '$2 == file { print $1 }')
     [ "${#expected}" -eq 64 ] || { echo 'Release checksum entry is missing or ambiguous.' >&2; exit 1; }
     if command -v sha256sum >/dev/null 2>&1; then
         actual=$(sha256sum "$work/$archive" | awk '{print $1}')
